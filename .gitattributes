@@ -1,0 +1,4 @@
+* text=auto
+
+docs/* linguist-documentation
+flake8_docstrings.py linguist-vendored
