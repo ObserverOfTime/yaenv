@@ -29,10 +29,10 @@ Documentation and examples are available on
 TODO
 ----
 
-* Add tests
-* Add travis
+* Add tests & Travis CI
+* Add contributing guidelines
 
-Related projects
+Similar projects
 ----------------
 
 * `django-environ <https://github.com/joke2k/django-environ>`_

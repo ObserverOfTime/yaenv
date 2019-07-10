@@ -1,0 +1,72 @@
+[tool.poetry]
+name = "yaenv"
+version = "0.2.0"
+readme = "README.rst"
+license = "BSD-3-Clause"
+description = "Yet another dotenv parser for Python."
+homepage = "https://github.com/ObserverOfTime/yaenv"
+documentation = "https://yaenv.readthedocs.io"
+authors = [
+    "ObserverOfTime <chronobserver@disroot.org>",
+]
+packages = [
+    { include = "yaenv" },
+]
+keywords = [
+    "12factor",
+    "config",
+    "configuration",
+    "django",
+    "dotenv",
+    "environment",
+    "variables",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: BSD License",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 2",
+    "Programming Language :: Python :: 2.7",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.5",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+]
+
+[tool.poetry.dependencies]
+python = ">=2.7" # ^3.5 on 2019-01-01
+python-dotenv = "*"
+typing = { version = "*", python = "<3.5" }
+
+[tool.poetry.extras]
+docs = [
+    "sphinx",
+    "sphinx-rtd-theme",
+    "sphinxcontrib-napoleon"
+]
+
+[tool.poetry.dev-dependencies]
+# lint
+flake8 = "*"
+flake8-mypy = "*"
+flake8-docstrings = { git = "https://github.com/alexf91/flake8-docstrings", branch = "numpy-style" }
+# docs
+sphinx = "*"
+sphinx-rtd-theme = "*"
+sphinxcontrib-napoleon = "*"
+# test
+pytest = "*"
+
+[tool.poetry.urls]
+"Bug Tracker" = "https://github.com/ObserverOfTime/yaenv/issues"
+
+[tool.flake8]
+ignore = "W504"
+max_line_length = 80
+exclude = ".git,.venv,venv,.env,env,__pycache__,docs/conf.py,setup.py"
+
+[build-system]
+requires = ["poetry==1.0.0a4"]
+build-backend = "poetry.masonry.api"

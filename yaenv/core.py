@@ -2,7 +2,7 @@
 
 from os import environ
 from random import SystemRandom
-from typing import List, Optional
+from typing import Iterator, List, Optional
 
 from dotenv.main import DotEnv, set_key, unset_key
 
@@ -101,6 +101,52 @@ class Env(DotEnv):
         """
         unset_key(self.dotenv_path, key)
 
+    def __iter__(self):
+        # type: () -> Iterator
+        """
+        Iterate through the entries in the dotenv file.
+
+        Returns
+        -------
+        Iterator
+            An iterator of key-value pairs.
+        """
+        if hasattr(self.dict(), 'iteritems'):
+            iter = getattr(self.dict(), 'iteritems')
+        else:
+            iter = self.dict().items
+        for entry in iter():
+            yield entry
+
+    def __contains__(self, item):
+        # type: (str) -> bool
+        """
+        Check whether a variable is defined in the dotenv file.
+
+        Parameters
+        ----------
+        item : str
+            The name of the variable.
+
+        Returns
+        -------
+        bool
+            ``True`` if the item is defined in the dotenv file.
+        """
+        return item in self.dict()
+
+    def __len__(self):
+        # type: () -> int
+        """
+        Return the number of environment variables.
+
+        Returns
+        -------
+        int
+            The number of variables defined in the dotenv file.
+        """
+        return len(self.dict())
+
     def str(self, key, default=None):
         # type: (str, Optional[str]) -> Optional[str]
         """
@@ -123,7 +169,7 @@ class Env(DotEnv):
         >>> env.str('STR_VAR', 'default')
         value
         """
-        return super(Env, self).get(key) or default
+        return self.ENV.get(key, super(Env, self).get(key) or default)
 
     def bool(self, key, default=None):
         # type: (str, Optional[bool]) -> bool

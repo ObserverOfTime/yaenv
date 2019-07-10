@@ -67,7 +67,19 @@ And more
 
    # Get all the variables in the dotenv file
    env.dict()
+
+   # Check if a variable is in the file
+   'EMAIL' in env
+
+   # Get the number of variables in the file
+   len(env)
+
+   # Iterate over the variables in the file
+   for key, val in env:
+      print('{}: {}'.format(key, val))
+
    # Add the variables to os.environ
    env.set_as_environment_variables()
+
    # Access os.environ
    env.ENV

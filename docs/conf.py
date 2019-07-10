@@ -13,20 +13,18 @@
 
 import os
 import sys
+import sphinx_rtd_theme
 
 sys.path.insert(0, os.path.abspath('..'))
 
 # -- Project information -----------------------------------------------------
 
-import yaenv  # noqa: E402
-
-project = yaenv.__name__
-copyright = yaenv.__copyright__
-author = yaenv.__author__
+project = 'yaenv'
+copyright = '2019, ObserverOfTime, BSD 3-Clause License'
+author = 'ObserverOfTime'
 
 # The full version, including alpha/beta/rc tags
-release = yaenv.__version__
-
+release = '0.2.0'
 
 # -- General configuration ---------------------------------------------------
 
@@ -80,8 +78,6 @@ extlinks = {
 }
 
 # -- Options for HTML output -------------------------------------------------
-
-import sphinx_rtd_theme  # noqa : E402
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
