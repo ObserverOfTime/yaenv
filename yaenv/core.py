@@ -13,7 +13,7 @@ class EnvError(Exception):
     """Exception class representing a dotenv error."""
 
 
-class Env(DotEnv):
+class Env(DotEnv, object):
     """
     Class used to parse and access environment variables.
 
@@ -69,8 +69,8 @@ class Env(DotEnv):
         EnvError
             If the environment variable is missing.
         """
-        value = super(Env, self).get(key)
-        if value is None:
+        value = self.dict().get(key)
+        if not value:
             error = "Missing environment variable: '{}'"
             raise EnvError(error.format(key))
         return value
@@ -87,6 +87,7 @@ class Env(DotEnv):
         value : str
             The value of the variable as ``str``.
         """
+        self.dict()[key] = value
         set_key(self.dotenv_path, key, value)
 
     def __delitem__(self, key):
@@ -98,8 +99,19 @@ class Env(DotEnv):
         ----------
         key : str
             The name of the variable.
+
+        Raises
+        ------
+        EnvError
+            If the variable is not set.
         """
-        unset_key(self.dotenv_path, key)
+        try:
+            del self.dict()[key]
+        except KeyError:
+            error = "Missing environment variable: '{}'"
+            raise EnvError(error.format(key))
+        else:
+            unset_key(self.dotenv_path, key)
 
     def __iter__(self):
         # type: () -> Iterator
@@ -111,12 +123,7 @@ class Env(DotEnv):
         Iterator
             An iterator of key-value pairs.
         """
-        if hasattr(self.dict(), 'iteritems'):
-            iter = getattr(self.dict(), 'iteritems')
-        else:
-            iter = self.dict().items
-        for entry in iter():
-            yield entry
+        return (entry for entry in utils.iteritems(self.dict()))
 
     def __contains__(self, item):
         # type: (str) -> bool
@@ -147,6 +154,30 @@ class Env(DotEnv):
         """
         return len(self.dict())
 
+    def __str__(self):
+        # type: () -> str
+        """
+        Return the environment variables as a string.
+
+        Returns
+        -------
+        str
+            The ``dict`` of variables defined in the dotenv file as a string.
+        """
+        return str(self.dict())
+
+    def __repr__(self):
+        # type: () -> str
+        """
+        Return a string representing the environment variables.
+
+        Returns
+        -------
+        str
+            The key-value pairs defined in the dotenv file as a string.
+        """
+        return '\n'.join(['{}="{}"'.format(k, v) for k, v in self])
+
     def str(self, key, default=None):
         # type: (str, Optional[str]) -> Optional[str]
         """
@@ -169,7 +200,7 @@ class Env(DotEnv):
         >>> env.str('STR_VAR', 'default')
         value
         """
-        return self.ENV.get(key, super(Env, self).get(key) or default)
+        return self.ENV.get(key, self.dict().get(key) or default)
 
     def bool(self, key, default=None):
         # type: (str, Optional[bool]) -> bool

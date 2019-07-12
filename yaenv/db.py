@@ -2,7 +2,7 @@
 
 from typing import Any, Dict, NewType
 
-from .utils import is_truthy, urlparse
+from .utils import is_truthy, iteritems, urlparse
 
 DBConfig = NewType('DBConfig', Dict[str, Any])
 
@@ -90,7 +90,7 @@ def parse(url):
 
     # Pass the query string into OPTIONS.
     options = {}  # type: Dict[str, Any]
-    for key, values in urlparse.parse_qs(uri.query).items():
+    for key, values in iteritems(urlparse.parse_qs(uri.query)):
         if key == 'isolation':
             options['isolation_level'] = {
                 'uncommitted': 4,
@@ -111,7 +111,8 @@ def parse(url):
             continue
         options[key] = values[-1]
 
-    config['OPTIONS'] = options
+    if options:
+        config['OPTIONS'] = options
 
     return config
 

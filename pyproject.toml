@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "yaenv"
-version = "0.2.0"
+version = "0.2.1"
 readme = "README.rst"
 license = "BSD-3-Clause"
 description = "Yet another dotenv parser for Python."
@@ -36,7 +36,7 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-python = ">=2.7" # ^3.5 on 2019-01-01
+python = ">=2.7"
 python-dotenv = "*"
 typing = { version = "*", python = "<3.5" }
 
@@ -48,24 +48,42 @@ docs = [
 ]
 
 [tool.poetry.dev-dependencies]
-# lint
-flake8 = "*"
-flake8-mypy = "*"
-flake8-docstrings = { git = "https://github.com/alexf91/flake8-docstrings", branch = "numpy-style" }
+# test
+more-itertools = "<6.0.0"
+pytest = "*"
+pytest-testdox = "*"
 # docs
 sphinx = "*"
 sphinx-rtd-theme = "*"
 sphinxcontrib-napoleon = "*"
-# test
-pytest = "*"
+# lint
+flake8 = "*"
+flake8-mypy = { version = "*", python = ">=3.5" }
+
+[tool.poetry.dev-dependencies.flake8-docstrings]
+git = "https://github.com/alexf91/flake8-docstrings"
+branch = "numpy-style"
 
 [tool.poetry.urls]
-"Bug Tracker" = "https://github.com/ObserverOfTime/yaenv/issues"
+"Bug tracker" = "https://github.com/ObserverOfTime/yaenv/issues"
+
+[tool.pytest]
+addopts = "--testdox"
+testpaths = "tests"
 
 [tool.flake8]
 ignore = "W504"
 max_line_length = 80
-exclude = ".git,.venv,venv,.env,env,__pycache__,docs/conf.py,setup.py"
+exclude = """
+    .git,
+    .venv,
+    venv,
+    .env,
+    env,
+    __pycache__,
+    docs/conf.py,
+    tests
+"""
 
 [build-system]
 requires = ["poetry==1.0.0a4"]

@@ -2,7 +2,7 @@
 
 from typing import Any, Dict, NewType
 
-from .utils import is_truthy, urlparse
+from .utils import is_truthy, iteritems, urlparse
 
 EmailConfig = NewType('EmailConfig', Dict[str, Any])
 
@@ -69,19 +69,27 @@ def parse(url):
     # Set config for smtp.
     if uri.scheme == 'smtp':
         config['EMAIL_PORT'] = uri.port or 25
+        if uri.port == 587:
+            config['EMAIL_USE_TLS'] = True
+        if uri.port == 465:
+            config['EMAIL_USE_SSL'] = True
 
     # Set config for smtp+tls.
     if uri.scheme == 'smtp+tls':
-        config['EMAIL_USE_TLS'] = True
         config['EMAIL_PORT'] = uri.port or 587
+        config['EMAIL_USE_TLS'] = True
 
     # Set config for smtp+ssl.
     if uri.scheme == 'smtp+ssl':
-        config['EMAIL_USE_SSL'] = True
         config['EMAIL_PORT'] = uri.port or 465
+        config['EMAIL_USE_SSL'] = True
 
     # Set extra config from the query string.
-    for key, values in urlparse.parse_qs(uri.query):
+    for key, values in iteritems(urlparse.parse_qs(uri.query)):
+        if key == 'tls':
+            config['EMAIL_USE_TLS'] = is_truthy(values[-1])
+        if key == 'ssl':
+            config['EMAIL_USE_SSL'] = is_truthy(values[-1])
         if key == 'certfile':
             config['EMAIL_SSL_CERTFILE'] = values[-1]
         if key == 'keyfile':
