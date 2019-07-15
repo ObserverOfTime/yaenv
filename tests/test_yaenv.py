@@ -10,11 +10,13 @@ def env():
     """Environment parser object."""
     return yaenv.Env('tests/.env')
 
+
 @pytest.mark.describe('Test Env parser')
 class TestEnv:
 
     @pytest.mark.it('it can get environment variables')
     def test_getitem(self, env):
+        assert env['BLANK'] == ''
         assert env['DOMAIN'] == 'example.com'
 
     @pytest.mark.it('it can set environment variables')
@@ -44,6 +46,7 @@ class TestEnv:
     def test_get(self, env):
         assert env.get('MISSING') is None
         assert env.get('MISSING', 'default') == 'default'
+        assert env.get('BLANK', 'default') == 'default'
 
     @pytest.mark.it('it raises EnvError for missing required variables')
     def test_getitem_missing(self, env):
@@ -54,14 +57,6 @@ class TestEnv:
 
 @pytest.mark.describe('Test type-casting')
 class TestEnvCasting:
-
-    @pytest.mark.it('it can cast to str')
-    @pytest.mark.xfail(version_info[0] == 2, reason='python2.7')
-    def test_str(self, env):
-        _val = env.str('SECRET_KEY')
-        assert _val == 'notsosecret' and type(_val) == str
-        _val = env.str('MISSING', 'default')
-        assert _val == 'default' and type(_val) == str
 
     @pytest.mark.it('it can cast to bool')
     def test_bool(self, env):
@@ -74,6 +69,7 @@ class TestEnvCasting:
         with pytest.raises(yaenv.EnvError) as err:
             _ = env.bool('FLOAT_VAR')
         assert 'Invalid boolean' in str(err.value)
+        assert env.bool('MISSING') is None
 
     @pytest.mark.it('it can cast to int')
     def test_int(self, env):
@@ -84,6 +80,7 @@ class TestEnvCasting:
         with pytest.raises(yaenv.EnvError) as err:
             _ = env.int('LIST_VAR')
         assert 'Invalid integer' in str(err.value)
+        assert env.int('MISSING') is None
 
     @pytest.mark.it('it can cast to float')
     def test_float(self, env):
@@ -94,6 +91,7 @@ class TestEnvCasting:
         with pytest.raises(yaenv.EnvError) as err:
             _ = env.float('LIST_VAR')
         assert 'Invalid numerical' in str(err.value)
+        assert env.float('MISSING') is None
 
     @pytest.mark.it('it can cast to list')
     def test_list(self, env):
@@ -103,6 +101,7 @@ class TestEnvCasting:
         _expect.append('item3')
         _val = env.list('MISSING', _expect)
         assert _val == _expect and type(_val) == list
+        assert env.list('MISSING') is None
 
 
 @pytest.mark.describe('Test Django integration')
@@ -125,8 +124,9 @@ class TestEnvDjango:
         }
         assert env.db('DB_URL_DEFAULT', 'sqlite://:memory:') == _db
         with pytest.raises(yaenv.EnvError) as err:
-            _ = env.db('INVALID_URL')
+            _ = env.db('INVALID_URL', 'invalid')
         assert 'Invalid database' in str(err.value)
+        assert env.db('MISSING') is None
 
     @pytest.mark.it('it can parse e-mail URLs')
     def test_email(self, env):
@@ -143,14 +143,15 @@ class TestEnvDjango:
         })
         assert env.email('EMAIL_URL_MISSING', 'console://127.0.0.1') == _email
         with pytest.raises(yaenv.EnvError) as err:
-            _ = env.email('INVALID_URL')
+            _ = env.email('INVALID_URL', 'invalid')
         assert 'Invalid e-mail' in str(err.value)
+        assert env.email('MISSING') is None
 
     @pytest.mark.it('it can get and generate secret keys')
     def test_secret(self, env):
         assert env.secret() == 'notsosecret'
         assert 'NEW_SECRET_KEY' not in env
         _secret = env.secret('NEW_SECRET_KEY')
-        assert len(_secret) == 50
+        assert _secret is not None
         assert _secret != env.secret('NEW_SECRET_KEY2')
         del env['NEW_SECRET_KEY'], env['NEW_SECRET_KEY2']

@@ -45,7 +45,6 @@ Type casting
 
 .. code:: python
 
-   env.str('STR_VAR', default='')
    env.bool('BOOL_VAR', default=True)
    env.int('INT_VAR', default=5)
    env.float('FLOAT_VAR', default=0.5)

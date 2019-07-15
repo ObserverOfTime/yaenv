@@ -24,7 +24,7 @@ copyright = '2019, ObserverOfTime, BSD 3-Clause License'
 author = 'ObserverOfTime'
 
 # The full version, including alpha/beta/rc tags
-release = '0.2.1'
+release = '0.2.2'
 
 # -- General configuration ---------------------------------------------------
 
@@ -69,12 +69,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 extlinks = {
-    'django': (
-        'https://docs.djangoproject.com/en/2.2/ref/settings/#%s', ''
-    ),
-    'os': (
-        'https://docs.python.org/3/library/os.html#os.%s', 'os.'
-    )
+    'dj': ('https://docs.djangoproject.com/en/2.2/ref/settings/#%s', ''),
+    'os': ('https://docs.python.org/3/library/os.html#os.%s', 'os.')
 }
 
 # -- Options for HTML output -------------------------------------------------

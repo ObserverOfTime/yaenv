@@ -56,7 +56,7 @@ def parse(url):
     -------
     DBConfig
         A dictionary that can be used in
-        :django:`django.settings.DATABASES <databases>`.
+        :dj:`django.settings.DATABASES <databases>`.
 
     Examples
     --------

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "yaenv"
-version = "0.2.1"
+version = "0.2.2"
 readme = "README.rst"
 license = "BSD-3-Clause"
 description = "Yet another dotenv parser for Python."
@@ -10,7 +10,7 @@ authors = [
     "ObserverOfTime <chronobserver@disroot.org>",
 ]
 packages = [
-    { include = "yaenv" },
+    {include = "yaenv"},
 ]
 keywords = [
     "12factor",
@@ -38,7 +38,7 @@ classifiers = [
 [tool.poetry.dependencies]
 python = ">=2.7"
 python-dotenv = "*"
-typing = { version = "*", python = "<3.5" }
+typing = {version = "*", python = "<3.5"}
 
 [tool.poetry.extras]
 docs = [
@@ -58,7 +58,7 @@ sphinx-rtd-theme = "*"
 sphinxcontrib-napoleon = "*"
 # lint
 flake8 = "*"
-flake8-mypy = { version = "*", python = ">=3.5" }
+flake8-mypy = {version = "*", python = ">=3.5"}
 
 [tool.poetry.dev-dependencies.flake8-docstrings]
 git = "https://github.com/alexf91/flake8-docstrings"

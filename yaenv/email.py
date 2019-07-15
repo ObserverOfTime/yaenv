@@ -37,7 +37,7 @@ def parse(url):
     -------
     EmailConfig
         A dictionary that can be used in
-        :django:`django.settings.EMAIL_* <email-backend>`.
+        :dj:`django.settings.EMAIL_* <email-backend>`.
 
     Examples
     --------

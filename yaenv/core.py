@@ -27,11 +27,6 @@ class Env(DotEnv, object):
     dotenv_path : str
         The path to a ``.env`` file.
 
-    Methods
-    -------
-    get(key, default=None)
-        Alias for :meth:`str`.
-
     Examples
     --------
     >>> open('.env').read()
@@ -39,14 +34,11 @@ class Env(DotEnv, object):
     LIST_VAR=item1:item2
     SECRET_KEY=notsosecret
     >>> env = Env('.env')
-    >>> env.get('STR_VAR')
-    value
     """
 
     def __init__(self, dotenv_path):
         # type: (str) -> None
         super(Env, self).__init__(dotenv_path)
-        self.get = self.str
         self.ENV = environ
 
     def __getitem__(self, key):
@@ -70,7 +62,7 @@ class Env(DotEnv, object):
             If the environment variable is missing.
         """
         value = self.dict().get(key)
-        if not value:
+        if value is None:
             error = "Missing environment variable: '{}'"
             raise EnvError(error.format(key))
         return value
@@ -178,7 +170,7 @@ class Env(DotEnv, object):
         """
         return '\n'.join(['{}="{}"'.format(k, v) for k, v in self])
 
-    def str(self, key, default=None):
+    def get(self, key, default=None):
         # type: (str, Optional[str]) -> Optional[str]
         """
         Return an environment variable or a default value.
@@ -197,13 +189,13 @@ class Env(DotEnv, object):
 
         Examples
         --------
-        >>> env.str('STR_VAR', 'default')
-        value
+        >>> env.get('STR_VAR', 'default')
+        'value'
         """
         return self.ENV.get(key, self.dict().get(key) or default)
 
     def bool(self, key, default=None):
-        # type: (str, Optional[bool]) -> bool
+        # type: (str, Optional[bool]) -> Optional[bool]
         """
         Return an environment variable as a ``bool``, or a default value.
 
@@ -230,6 +222,8 @@ class Env(DotEnv, object):
         False
         """
         value = self.get(key, default)
+        if value is None:
+            return None
         if isinstance(value, bool):
             return value
         if utils.is_truthy(value):
@@ -239,7 +233,7 @@ class Env(DotEnv, object):
         raise EnvError("Invalid boolean value: '{}'".format(value))
 
     def int(self, key, default=None):
-        # type: (str, Optional[int]) -> int
+        # type: (str, Optional[int]) -> Optional[int]
         """
         Return an environment variable as an ``int``, or a default value.
 
@@ -266,13 +260,15 @@ class Env(DotEnv, object):
         10
         """
         value = self.get(key, default)
+        if value is None:
+            return None
         try:
             return int(value)
         except ValueError:
             raise EnvError("Invalid integer value: '{}'".format(value))
 
     def float(self, key, default=None):
-        # type: (str, Optional[float]) -> float
+        # type: (str, Optional[float]) -> Optional[float]
         """
         Return an environment variable as a ``float``, or a default value.
 
@@ -299,13 +295,15 @@ class Env(DotEnv, object):
         0.3
         """
         value = self.get(key, default)
+        if value is None:
+            return None
         try:
             return float(value)
         except ValueError:
             raise EnvError("Invalid numerical value: '{}'".format(value))
 
     def list(self, key, default=None, separator=','):
-        # type: (str, Optional[List], str) -> List
+        # type: (str, Optional[List], str) -> Optional[List]
         """
         Return an environment variable as a ``list``, or a default value.
 
@@ -329,12 +327,14 @@ class Env(DotEnv, object):
         ['item1', 'item2']
         """
         value = self.get(key, default)
+        if value is None:
+            return None
         if isinstance(value, List):
             return value
         return value.split(separator)
 
     def db(self, key, default=None):
-        # type: (str, Optional[str]) -> db.DBConfig
+        # type: (str, Optional[str]) -> Optional[db.DBConfig]
         """
         Return a dictionary that can be used for Django's database settings.
 
@@ -347,7 +347,7 @@ class Env(DotEnv, object):
 
         Returns
         -------
-        db.DBConfig
+        Optional[db.DBConfig]
             A database config object for Django.
 
         Raises
@@ -360,13 +360,15 @@ class Env(DotEnv, object):
         :meth:`yaenv.db.parse` : Database URL parser.
         """
         value = self.get(key, default)
+        if value is None:
+            return None
         try:
             return db.parse(value)
         except Exception:
             raise EnvError("Invalid database URL: '{}'".format(value))
 
     def email(self, key, default=None):
-        # type: (str, Optional[str]) -> email.EmailConfig
+        # type: (str, Optional[str]) -> Optional[email.EmailConfig]
         """
         Return a dictionary that can be used for Django's e-mail settings.
 
@@ -379,7 +381,7 @@ class Env(DotEnv, object):
 
         Returns
         -------
-        email.EmailConfig
+        Optional[email.EmailConfig]
             An e-mail config object for Django.
 
         Raises
@@ -392,6 +394,8 @@ class Env(DotEnv, object):
         :meth:`yaenv.email.parse` : E-mail URL parser.
         """
         value = self.get(key, default)
+        if value is None:
+            return None
         try:
             return email.parse(value)
         except Exception:
