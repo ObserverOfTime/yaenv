@@ -42,6 +42,14 @@ class TestEnv:
     def test_interpolation(self, env):
         assert env['EMAIL'] == 'user@' + env['DOMAIN']
 
+    @pytest.mark.skipif(version_info < (3, 6), reason='requires Python 3.6+')
+    @pytest.mark.it('it returns the file system path of the dotenv file')
+    def test_fspath(self, env):
+        from os import fspath
+        from filecmp import cmp
+        assert fspath(env) == 'tests/.env'
+        assert cmp(env, 'tests/.env')
+
     @pytest.mark.it('it returns default values for optional variables')
     def test_get(self, env):
         assert env.get('MISSING') is None

@@ -64,6 +64,9 @@ And more
 
 .. code:: python
 
+   # Get the path of the dotenv file
+   env.dotenv_path
+
    # Get all the variables in the dotenv file
    env.dict()
 

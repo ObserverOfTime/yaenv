@@ -146,19 +146,21 @@ class Env(DotEnv, object):
         """
         return len(self.dict())
 
-    def __str__(self):
+    def __fspath__(self):
         # type: () -> str
         """
-        Return the environment variables as a string.
+        Return the file system representation of the path.
+
+        This method is used by :os:`fspath` (Python 3.6+).
 
         Returns
         -------
         str
-            The ``dict`` of variables defined in the dotenv file as a string.
+            The path of the dotenv file.
         """
-        return str(self.dict())
+        return self.dotenv_path
 
-    def __repr__(self):
+    def __str__(self):
         # type: () -> str
         """
         Return a string representing the environment variables.
@@ -166,9 +168,21 @@ class Env(DotEnv, object):
         Returns
         -------
         str
-            The key-value pairs defined in the dotenv file as a string.
+            The key-value pairs defined in the dotenv file as lines.
         """
-        return '\n'.join(['{}="{}"'.format(k, v) for k, v in self])
+        return '\n'.join(map('{0[0]}="{0[1]}"'.format, self))
+
+    def __repr__(self):
+        # type: () -> str
+        """
+        Return a string representing the object.
+
+        Returns
+        -------
+        str
+            A string that shows the path of the dotenv file.
+        """
+        return "Env('{}')".format(self.dotenv_path)
 
     def get(self, key, default=None):
         # type: (str, Optional[str]) -> Optional[str]

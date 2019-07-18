@@ -17,6 +17,7 @@ SCHEMES = {
 # Scheme aliases.
 SCHEMES['postgresql'] = SCHEMES['pgsql']
 SCHEMES['postgres'] = SCHEMES['pgsql']
+SCHEMES['sqlite3'] = SCHEMES['sqlite']
 
 # Register database schemes in URLs.
 urlparse.uses_netloc += list(SCHEMES)
@@ -36,7 +37,7 @@ def add_scheme(scheme, backend):
 
     Examples
     --------
-    >>> add_scheme('spatialite', 'django.contrib.gis.db.backends.spatialite')
+    >>> add_scheme('mysql-connector', 'mysql.connector.django')
     """
     SCHEMES[scheme] = backend
     urlparse.uses_netloc.append(scheme)
