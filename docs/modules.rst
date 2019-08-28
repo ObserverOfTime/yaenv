@@ -36,5 +36,5 @@ utils module
 ------------
 
 .. automodule:: yaenv.utils
-   :members: is_truthy, is_falsy
+   :members:
    :show-inheritance:

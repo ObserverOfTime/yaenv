@@ -2,6 +2,7 @@
 
 from os import environ
 from random import SystemRandom
+
 from typing import Iterator, List, Optional
 
 from dotenv.main import DotEnv, set_key, unset_key
@@ -13,7 +14,7 @@ class EnvError(Exception):
     """Exception class representing a dotenv error."""
 
 
-class Env(DotEnv, object):
+class Env(DotEnv):
     """
     Class used to parse and access environment variables.
 
@@ -36,13 +37,11 @@ class Env(DotEnv, object):
     >>> env = Env('.env')
     """
 
-    def __init__(self, dotenv_path):
-        # type: (str) -> None
+    def __init__(self, dotenv_path: str) -> None:
         super(Env, self).__init__(dotenv_path)
         self.ENV = environ
 
-    def __getitem__(self, key):
-        # type: (str) -> str
+    def __getitem__(self, key: str) -> str:
         """
         Return an environment variable that cannot be missing.
 
@@ -67,8 +66,7 @@ class Env(DotEnv, object):
             raise EnvError(error.format(key))
         return value
 
-    def __setitem__(self, key, value):
-        # type: (str, str) -> None
+    def __setitem__(self, key: str, value: str) -> None:
         """
         Set an environment variable.
 
@@ -82,8 +80,7 @@ class Env(DotEnv, object):
         self.dict()[key] = value
         set_key(self.dotenv_path, key, value)
 
-    def __delitem__(self, key):
-        # type: (str) -> None
+    def __delitem__(self, key: str) -> None:
         """
         Unset an environment variable.
 
@@ -105,8 +102,7 @@ class Env(DotEnv, object):
         else:
             unset_key(self.dotenv_path, key)
 
-    def __iter__(self):
-        # type: () -> Iterator
+    def __iter__(self) -> Iterator:
         """
         Iterate through the entries in the dotenv file.
 
@@ -115,10 +111,9 @@ class Env(DotEnv, object):
         Iterator
             An iterator of key-value pairs.
         """
-        return (entry for entry in utils.iteritems(self.dict()))
+        yield from self.dict().items()
 
-    def __contains__(self, item):
-        # type: (str) -> bool
+    def __contains__(self, item: str) -> bool:
         """
         Check whether a variable is defined in the dotenv file.
 
@@ -134,8 +129,7 @@ class Env(DotEnv, object):
         """
         return item in self.dict()
 
-    def __len__(self):
-        # type: () -> int
+    def __len__(self) -> int:
         """
         Return the number of environment variables.
 
@@ -146,8 +140,7 @@ class Env(DotEnv, object):
         """
         return len(self.dict())
 
-    def __fspath__(self):
-        # type: () -> str
+    def __fspath__(self) -> str:
         """
         Return the file system representation of the path.
 
@@ -160,8 +153,7 @@ class Env(DotEnv, object):
         """
         return self.dotenv_path
 
-    def __str__(self):
-        # type: () -> str
+    def __str__(self) -> str:
         """
         Return a string representing the environment variables.
 
@@ -172,8 +164,7 @@ class Env(DotEnv, object):
         """
         return '\n'.join(map('{0[0]}="{0[1]}"'.format, self))
 
-    def __repr__(self):
-        # type: () -> str
+    def __repr__(self) -> str:
         """
         Return a string representing the object.
 
@@ -184,8 +175,7 @@ class Env(DotEnv, object):
         """
         return "Env('{}')".format(self.dotenv_path)
 
-    def get(self, key, default=None):
-        # type: (str, Optional[str]) -> Optional[str]
+    def get(self, key: str, default: Optional[str] = None) -> Optional[str]:
         """
         Return an environment variable or a default value.
 
@@ -208,8 +198,7 @@ class Env(DotEnv, object):
         """
         return self.ENV.get(key, self.dict().get(key) or default)
 
-    def bool(self, key, default=None):
-        # type: (str, Optional[bool]) -> Optional[bool]
+    def bool(self, key: str, default: Optional[bool] = None) -> Optional[bool]:
         """
         Return an environment variable as a ``bool``, or a default value.
 
@@ -246,8 +235,7 @@ class Env(DotEnv, object):
             return False
         raise EnvError("Invalid boolean value: '{}'".format(value))
 
-    def int(self, key, default=None):
-        # type: (str, Optional[int]) -> Optional[int]
+    def int(self, key: str, default: Optional[int] = None) -> Optional[int]:
         """
         Return an environment variable as an ``int``, or a default value.
 
@@ -281,8 +269,8 @@ class Env(DotEnv, object):
         except ValueError:
             raise EnvError("Invalid integer value: '{}'".format(value))
 
-    def float(self, key, default=None):
-        # type: (str, Optional[float]) -> Optional[float]
+    def float(self, key: str, default:
+              Optional[float] = None) -> Optional[float]:
         """
         Return an environment variable as a ``float``, or a default value.
 
@@ -316,8 +304,8 @@ class Env(DotEnv, object):
         except ValueError:
             raise EnvError("Invalid numerical value: '{}'".format(value))
 
-    def list(self, key, default=None, separator=','):
-        # type: (str, Optional[List], str) -> Optional[List]
+    def list(self, key: str, default: Optional[List] = None,
+             separator: str = ',') -> Optional[List]:
         """
         Return an environment variable as a ``list``, or a default value.
 
@@ -347,8 +335,8 @@ class Env(DotEnv, object):
             return value
         return value.split(separator)
 
-    def db(self, key, default=None):
-        # type: (str, Optional[str]) -> Optional[db.DBConfig]
+    def db(self, key: str, default:
+           Optional[str] = None) -> Optional[db.DBConfig]:
         """
         Return a dictionary that can be used for Django's database settings.
 
@@ -381,8 +369,8 @@ class Env(DotEnv, object):
         except Exception:
             raise EnvError("Invalid database URL: '{}'".format(value))
 
-    def email(self, key, default=None):
-        # type: (str, Optional[str]) -> Optional[email.EmailConfig]
+    def email(self, key: str, default:
+              Optional[str] = None) -> Optional[email.EmailConfig]:
         """
         Return a dictionary that can be used for Django's e-mail settings.
 
@@ -415,8 +403,7 @@ class Env(DotEnv, object):
         except Exception:
             raise EnvError("Invalid e-mail URL: '{}'".format(value))
 
-    def secret(self, key='SECRET_KEY'):
-        # type: (str) -> str
+    def secret(self, key: str = 'SECRET_KEY') -> str:
         """
         Return a cryptographically secure secret key.
 

@@ -1,19 +1,20 @@
 """E-mail URL parser."""
 
 from typing import Any, Dict, NewType
+from urllib import parse as urlparse
 
-from .utils import is_truthy, iteritems, urlparse
+from .utils import is_truthy
 
 EmailConfig = NewType('EmailConfig', Dict[str, Any])
 
 # Supported schemes.
-SCHEMES = {
+SCHEMES: Dict[str, str] = {
     'smtp': 'django.core.mail.backends.smtp.EmailBackend',
     'console': 'django.core.mail.backends.console.EmailBackend',
     'file': 'django.core.mail.backends.filebased.EmailBackend',
     'memory': 'django.core.mail.backends.locmem.EmailBackend',
-    'dummy': 'django.core.mail.backends.dummy.EmailBackend'
-}  # type: Dict[str, str]
+    'dummy': 'django.core.mail.backends.dummy.EmailBackend',
+}
 
 # Scheme aliases.
 SCHEMES['smtp+tls'] = SCHEMES['smtp']
@@ -23,8 +24,7 @@ SCHEMES['smtp+ssl'] = SCHEMES['smtp']
 urlparse.uses_netloc += list(SCHEMES)
 
 
-def parse(url):
-    # type: (str) -> EmailConfig
+def parse(url: str) -> EmailConfig:
     """
     Parse an e-mail URL.
 
@@ -85,7 +85,8 @@ def parse(url):
         config['EMAIL_USE_SSL'] = True
 
     # Set extra config from the query string.
-    for key, values in iteritems(urlparse.parse_qs(uri.query)):
+    qs = urlparse.parse_qs(uri.query)
+    for key, values in qs.items():
         if key == 'tls':
             config['EMAIL_USE_TLS'] = is_truthy(values[-1])
         if key == 'ssl':

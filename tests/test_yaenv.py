@@ -15,17 +15,17 @@ def env():
 class TestEnv:
 
     @pytest.mark.it('it can get environment variables')
-    def test_getitem(self, env):
+    def test_getitem(self, env: yaenv.Env):
         assert env['BLANK'] == ''
         assert env['DOMAIN'] == 'example.com'
 
     @pytest.mark.it('it can set environment variables')
-    def test_setitem(self, env):
+    def test_setitem(self, env: yaenv.Env):
         env['NEW_VAR'] = 'new_var'
         assert env['NEW_VAR'] == 'new_var'
 
     @pytest.mark.it('it can unset environment variables')
-    def test_delitem(self, env):
+    def test_delitem(self, env: yaenv.Env):
         assert 'NEW_VAR' in env
         del env['NEW_VAR']
         assert 'NEW_VAR' not in env
@@ -34,30 +34,30 @@ class TestEnv:
         assert 'Missing' in str(err.value)
 
     @pytest.mark.it('it can iterate over key-value pairs')
-    def test_iter(self, env):
+    def test_iter(self, env: yaenv.Env):
         for key, val in env:
             assert env[key] == val
 
     @pytest.mark.it('it can interpolate variables')
-    def test_interpolation(self, env):
+    def test_interpolation(self, env: yaenv.Env):
         assert env['EMAIL'] == 'user@' + env['DOMAIN']
 
     @pytest.mark.skipif(version_info < (3, 6), reason='requires Python 3.6+')
     @pytest.mark.it('it returns the file system path of the dotenv file')
-    def test_fspath(self, env):
+    def test_fspath(self, env: yaenv.Env):
         from os import fspath
         from filecmp import cmp
         assert fspath(env) == 'tests/.env'
         assert cmp(env, 'tests/.env')
 
     @pytest.mark.it('it returns default values for optional variables')
-    def test_get(self, env):
+    def test_get(self, env: yaenv.Env):
         assert env.get('MISSING') is None
         assert env.get('MISSING', 'default') == 'default'
         assert env.get('BLANK', 'default') == 'default'
 
     @pytest.mark.it('it raises EnvError for missing required variables')
-    def test_getitem_missing(self, env):
+    def test_getitem_missing(self, env: yaenv.Env):
         with pytest.raises(yaenv.EnvError) as err:
             _ = env['MISSING']
         assert 'Missing' in str(err.value)
@@ -67,7 +67,7 @@ class TestEnv:
 class TestEnvCasting:
 
     @pytest.mark.it('it can cast to bool')
-    def test_bool(self, env):
+    def test_bool(self, env: yaenv.Env):
         _val = env.bool('BOOL_VAR')
         assert not _val and type(_val) == bool
         _val = env.bool('INT_VAR')
@@ -80,7 +80,7 @@ class TestEnvCasting:
         assert env.bool('MISSING') is None
 
     @pytest.mark.it('it can cast to int')
-    def test_int(self, env):
+    def test_int(self, env: yaenv.Env):
         _val = env.int('INT_VAR')
         assert _val == 1 and type(_val) == int
         _val = env.int('MISSING', -2)
@@ -91,7 +91,7 @@ class TestEnvCasting:
         assert env.int('MISSING') is None
 
     @pytest.mark.it('it can cast to float')
-    def test_float(self, env):
+    def test_float(self, env: yaenv.Env):
         _val = env.float('FLOAT_VAR')
         assert _val == 10.0 and type(_val) == float
         _val = env.float('MISSING', -3.1)
@@ -102,7 +102,7 @@ class TestEnvCasting:
         assert env.float('MISSING') is None
 
     @pytest.mark.it('it can cast to list')
-    def test_list(self, env):
+    def test_list(self, env: yaenv.Env):
         _val = env.list('LIST_VAR', separator=':')
         _expect = ['item1', 'item2']
         assert _val == _expect and type(_val) == list
@@ -116,7 +116,7 @@ class TestEnvCasting:
 class TestEnvDjango:
 
     @pytest.mark.it('it can parse database URLs')
-    def test_db(self, env):
+    def test_db(self, env: yaenv.Env):
         _db = {
             'ENGINE': yaenv.db.SCHEMES['sqlite'],
             'NAME': 'db.sqlite3',
@@ -137,7 +137,7 @@ class TestEnvDjango:
         assert env.db('MISSING') is None
 
     @pytest.mark.it('it can parse e-mail URLs')
-    def test_email(self, env):
+    def test_email(self, env: yaenv.Env):
         _email = {
             'EMAIL_BACKEND': yaenv.email.SCHEMES['dummy'],
             'EMAIL_HOST_USER': '',
@@ -156,7 +156,7 @@ class TestEnvDjango:
         assert env.email('MISSING') is None
 
     @pytest.mark.it('it can get and generate secret keys')
-    def test_secret(self, env):
+    def test_secret(self, env: yaenv.Env):
         assert env.secret() == 'notsosecret'
         assert 'NEW_SECRET_KEY' not in env
         _secret = env.secret('NEW_SECRET_KEY')

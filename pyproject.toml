@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "yaenv"
-version = "0.2.3"
+version = "1.0.0dev1"
 readme = "README.rst"
 license = "BSD-3-Clause"
 description = "Yet another dotenv parser for Python."
@@ -22,13 +22,11 @@ keywords = [
     "variables",
 ]
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: BSD License",
     "Natural Language :: English",
     "Operating System :: OS Independent",
-    "Programming Language :: Python :: 2",
-    "Programming Language :: Python :: 2.7",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.5",
     "Programming Language :: Python :: 3.6",
@@ -36,9 +34,8 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-python = ">=2.7"
+python = ">=3.5"
 python-dotenv = "*"
-typing = {version = "*", python = "<3.5"}
 
 [tool.poetry.extras]
 docs = [
@@ -49,7 +46,6 @@ docs = [
 
 [tool.poetry.dev-dependencies]
 # test
-more-itertools = "<6.0.0"
 pytest = "*"
 pytest-testdox = "*"
 # docs
@@ -58,7 +54,7 @@ sphinx-rtd-theme = "*"
 sphinxcontrib-napoleon = "*"
 # lint
 flake8 = "*"
-flake8-mypy = {version = "*", python = ">=3.5"}
+flake8-mypy = "*"
 
 [tool.poetry.dev-dependencies.flake8-docstrings]
 git = "https://github.com/alexf91/flake8-docstrings"

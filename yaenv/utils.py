@@ -1,24 +1,13 @@
 """Useful utilities."""
 
-from typing import Any, Dict, Iterator
-
-try:
-    from urllib import parse as urlparse
-except ImportError:
-    import urlparse  # noqa: T484
+from typing import Any
 
 _truthy = ('1', 'on', 'y', 'yes', 'true')
 
 _falsy = ('', '0', 'off', 'n', 'no', 'false')
 
 
-def iteritems(items):  # noqa: D103
-    # type: (Dict) -> Iterator
-    return getattr(items, 'iteritems', items.items)()
-
-
-def is_truthy(arg):
-    # type: (Any) -> bool
+def is_truthy(arg: Any) -> bool:
     """
     Check if the given argument is truthy.
 
@@ -42,8 +31,7 @@ def is_truthy(arg):
     return str(arg).lower() in _truthy
 
 
-def is_falsy(arg):
-    # type: (Any) -> bool
+def is_falsy(arg: Any) -> bool:
     """
     Check if the given argument is falsy.
 
@@ -67,4 +55,4 @@ def is_falsy(arg):
     return str(arg).lower() in _falsy
 
 
-__all__ = ['is_truthy', 'is_falsy', 'urlparse', 'iteritems']
+__all__ = ['is_truthy', 'is_falsy']

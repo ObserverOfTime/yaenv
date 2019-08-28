@@ -33,6 +33,7 @@ Documentation and examples are available on
 Similar projects
 ----------------
 
+* `python-dotenv <https://github.com/theskumar/python-dotenv>`_
 * `django-environ <https://github.com/joke2k/django-environ>`_
 * `django-dotenv <https://github.com/jpadilla/django-dotenv>`_
 * `environs <https://github.com/sloria/environs>`_

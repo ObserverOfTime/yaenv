@@ -1,18 +1,19 @@
 """Database URL parser."""
 
 from typing import Any, Dict, NewType
+from urllib import parse as urlparse
 
-from .utils import is_truthy, iteritems, urlparse
+from .utils import is_truthy
 
 DBConfig = NewType('DBConfig', Dict[str, Any])
 
 # Supported schemes.
-SCHEMES = {
+SCHEMES: Dict[str, str] = {
     'mysql': 'django.db.backends.mysql',
     'oracle': 'django.db.backends.oracle',
     'pgsql': 'django.db.backends.postgresql',
     'sqlite': 'django.db.backends.sqlite3',
-}  # type: Dict[str, str]
+}
 
 # Scheme aliases.
 SCHEMES['postgresql'] = SCHEMES['pgsql']
@@ -23,8 +24,7 @@ SCHEMES['sqlite3'] = SCHEMES['sqlite']
 urlparse.uses_netloc += list(SCHEMES)
 
 
-def add_scheme(scheme, backend):
-    # type: (str, str) -> None
+def add_scheme(scheme: str, backend: str) -> None:
     """
     Extend the dictionary of supported schemes.
 
@@ -43,8 +43,7 @@ def add_scheme(scheme, backend):
     urlparse.uses_netloc.append(scheme)
 
 
-def parse(url):
-    # type: (str) -> DBConfig
+def parse(url: str) -> DBConfig:
     """
     Parse a database URL.
 
@@ -74,7 +73,10 @@ def parse(url):
     """
     # Special case: https://www.sqlite.org/inmemorydb.html.
     if url == 'sqlite://:memory:':
-        return DBConfig({'ENGINE': SCHEMES['sqlite'], 'NAME': ':memory:'})
+        return DBConfig({
+            'ENGINE': SCHEMES['sqlite'],
+            'NAME': ':memory:',
+        })
 
     # Parse the given URL.
     uri = urlparse.urlparse(url)
@@ -90,15 +92,16 @@ def parse(url):
     })
 
     # Pass the query string into OPTIONS.
-    options = {}  # type: Dict[str, Any]
-    for key, values in iteritems(urlparse.parse_qs(uri.query)):
+    options: Dict[str, Any] = {}
+    qs = urlparse.parse_qs(uri.query)
+    for key, values in qs.items():
         if key == 'isolation':
             options['isolation_level'] = {
                 'uncommitted': 4,
                 'serializable': 3,
                 'repeatable': 2,
                 'committed': 1,
-                'autocommit': 0
+                'autocommit': 0,
             }.get(values[-1], None)
             continue
         if key == 'search_path':
