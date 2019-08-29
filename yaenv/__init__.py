@@ -2,6 +2,6 @@
 
 from .core import Env, EnvError
 
-__version__ = '0.2.3'
+__version__ = '0.3.0'
 
 __all__ = ['Env', 'EnvError']

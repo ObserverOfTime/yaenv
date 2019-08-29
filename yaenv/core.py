@@ -2,7 +2,7 @@
 
 from os import environ
 from random import SystemRandom
-from typing import Iterator, List, Optional
+from typing import Dict, Iterator, List, Optional
 
 from dotenv.main import DotEnv, set_key, unset_key
 
@@ -40,6 +40,7 @@ class Env(DotEnv, object):
         # type: (str) -> None
         super(Env, self).__init__(dotenv_path)
         self.ENV = environ
+        self.envfile = dotenv_path
 
     def __getitem__(self, key):
         # type: (str) -> str
@@ -61,7 +62,7 @@ class Env(DotEnv, object):
         EnvError
             If the environment variable is missing.
         """
-        value = self.dict().get(key)
+        value = self.vars.get(key)
         if value is None:
             error = "Missing environment variable: '{}'"
             raise EnvError(error.format(key))
@@ -79,8 +80,8 @@ class Env(DotEnv, object):
         value : str
             The value of the variable as ``str``.
         """
-        self.dict()[key] = value
-        set_key(self.dotenv_path, key, value)
+        self.vars[key] = value
+        set_key(self.envfile, key, value)
 
     def __delitem__(self, key):
         # type: (str) -> None
@@ -98,12 +99,12 @@ class Env(DotEnv, object):
             If the variable is not set.
         """
         try:
-            del self.dict()[key]
+            del self.vars[key]
         except KeyError:
             error = "Missing environment variable: '{}'"
             raise EnvError(error.format(key))
         else:
-            unset_key(self.dotenv_path, key)
+            unset_key(self.envfile, key)
 
     def __iter__(self):
         # type: () -> Iterator
@@ -115,7 +116,7 @@ class Env(DotEnv, object):
         Iterator
             An iterator of key-value pairs.
         """
-        return (entry for entry in utils.iteritems(self.dict()))
+        return (entry for entry in utils.iteritems(self.vars))
 
     def __contains__(self, item):
         # type: (str) -> bool
@@ -132,7 +133,7 @@ class Env(DotEnv, object):
         bool
             ``True`` if the item is defined in the dotenv file.
         """
-        return item in self.dict()
+        return item in self.vars
 
     def __len__(self):
         # type: () -> int
@@ -144,7 +145,7 @@ class Env(DotEnv, object):
         int
             The number of variables defined in the dotenv file.
         """
-        return len(self.dict())
+        return len(self.vars)
 
     def __fspath__(self):
         # type: () -> str
@@ -158,7 +159,7 @@ class Env(DotEnv, object):
         str
             The path of the dotenv file.
         """
-        return self.dotenv_path
+        return self.envfile
 
     def __str__(self):
         # type: () -> str
@@ -182,7 +183,18 @@ class Env(DotEnv, object):
         str
             A string that shows the path of the dotenv file.
         """
-        return "Env('{}')".format(self.dotenv_path)
+        return "Env('{}')".format(self.envfile)
+
+    @property
+    def vars(self):
+        # type: () -> Dict[str, str]
+        """Get the environment variables as a ``dict``."""
+        return self.dict()
+
+    def setenv(self):
+        # type: () -> None
+        """Add the variables defined in the dotenv file to :os:`environ`."""
+        self.set_as_environment_variables()
 
     def get(self, key, default=None):
         # type: (str, Optional[str]) -> Optional[str]
@@ -206,7 +218,7 @@ class Env(DotEnv, object):
         >>> env.get('STR_VAR', 'default')
         'value'
         """
-        return self.ENV.get(key, self.dict().get(key) or default)
+        return self.ENV.get(key, self.vars.get(key) or default)
 
     def bool(self, key, default=None):
         # type: (str, Optional[bool]) -> Optional[bool]

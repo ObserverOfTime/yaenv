@@ -24,7 +24,7 @@ copyright = '2019, ObserverOfTime, BSD 3-Clause License'
 author = 'ObserverOfTime'
 
 # The full version, including alpha/beta/rc tags
-release = '0.2.3'
+release = '0.3.0'
 
 # -- General configuration ---------------------------------------------------
 

@@ -65,10 +65,10 @@ And more
 .. code:: python
 
    # Get the path of the dotenv file
-   env.dotenv_path
+   env.envfile
 
    # Get all the variables in the dotenv file
-   env.dict()
+   env.vars
 
    # Check if a variable is in the file
    'EMAIL' in env
@@ -81,7 +81,7 @@ And more
       print('{}: {}'.format(key, val))
 
    # Add the variables to os.environ
-   env.set_as_environment_variables()
+   env.setenv()
 
    # Access os.environ
    env.ENV
