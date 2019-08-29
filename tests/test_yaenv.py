@@ -42,6 +42,13 @@ class TestEnv:
     def test_interpolation(self, env: yaenv.Env):
         assert env['EMAIL'] == 'user@' + env['DOMAIN']
 
+    @pytest.mark.it('it can update os.environ')
+    def test_setenv(self, env: yaenv.Env):
+        from os import environ
+        assert 'EMAIL' not in environ
+        env.setenv()
+        assert 'EMAIL' in environ
+
     @pytest.mark.skipif(version_info < (3, 6), reason='requires Python 3.6+')
     @pytest.mark.it('it returns the file system path of the dotenv file')
     def test_fspath(self, env: yaenv.Env):
@@ -52,15 +59,21 @@ class TestEnv:
 
     @pytest.mark.it('it returns default values for optional variables')
     def test_get(self, env: yaenv.Env):
+        assert env.get('BLANK', 'default') == ''
         assert env.get('MISSING') is None
         assert env.get('MISSING', 'default') == 'default'
-        assert env.get('BLANK', 'default') == 'default'
 
     @pytest.mark.it('it raises EnvError for missing required variables')
     def test_getitem_missing(self, env: yaenv.Env):
         with pytest.raises(yaenv.EnvError) as err:
             _ = env['MISSING']
         assert 'Missing' in str(err.value)
+
+    @pytest.mark.it('it raises EnvError for an invalid dotenv file')
+    def test_invalid_envfile(self):
+        with pytest.raises(yaenv.EnvError) as err:
+            _ = yaenv.Env('/invalidfile')
+        assert 'does not exist' in str(err.value)
 
 
 @pytest.mark.describe('Test type-casting')

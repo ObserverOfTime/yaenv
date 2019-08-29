@@ -6,15 +6,16 @@ from urllib import parse as urlparse
 from .utils import is_truthy
 
 EmailConfig = NewType('EmailConfig', Dict[str, Any])
+EmailConfig.__qualname__ = 'yaenv.email.EmailConfig'
 
 # Supported schemes.
-SCHEMES: Dict[str, str] = {
+SCHEMES = {
     'smtp': 'django.core.mail.backends.smtp.EmailBackend',
     'console': 'django.core.mail.backends.console.EmailBackend',
     'file': 'django.core.mail.backends.filebased.EmailBackend',
     'memory': 'django.core.mail.backends.locmem.EmailBackend',
     'dummy': 'django.core.mail.backends.dummy.EmailBackend',
-}
+}  # type: Dict[str, str]
 
 # Scheme aliases.
 SCHEMES['smtp+tls'] = SCHEMES['smtp']

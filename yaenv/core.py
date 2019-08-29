@@ -1,20 +1,25 @@
 """Environment variable parser."""
 
-from os import environ
+from functools import lru_cache
+from os import environ, path
 from random import SystemRandom
-
-from typing import Iterator, List, Optional
-
-from dotenv.main import DotEnv, set_key, unset_key
+from re import compile as regex, M
+from shutil import move
+from tempfile import mkstemp
+from typing import Dict, Iterator, List, Optional
 
 from . import db, email, utils
+
+
+_line = regex(r'^\s*(\w+)\s*=\s*["\']?([^"\'].*)?["\']?', M)
+_posix_var = regex(r'\$\{([^}].*)?\}')
 
 
 class EnvError(Exception):
     """Exception class representing a dotenv error."""
 
 
-class Env(DotEnv):
+class Env:
     """
     Class used to parse and access environment variables.
 
@@ -22,11 +27,13 @@ class Env(DotEnv):
     ----------
     ENV : os._Environ
         A reference to :os:`environ`.
+    envfile : str
+        The dotenv file of the object.
 
     Parameters
     ----------
-    dotenv_path : str
-        The path to a ``.env`` file.
+    envfile : str
+        The path to a dotenv file.
 
     Examples
     --------
@@ -37,8 +44,12 @@ class Env(DotEnv):
     >>> env = Env('.env')
     """
 
-    def __init__(self, dotenv_path: str) -> None:
-        super(Env, self).__init__(dotenv_path)
+    def __init__(self, envfile: str) -> None:
+        if not path.isfile(envfile):
+            error = "File '{}' does not exist"
+            raise EnvError(error.format(envfile))
+
+        self.envfile = envfile
         self.ENV = environ
 
     def __getitem__(self, key: str) -> str:
@@ -60,7 +71,7 @@ class Env(DotEnv):
         EnvError
             If the environment variable is missing.
         """
-        value = self.dict().get(key)
+        value = self.vars.get(key)
         if value is None:
             error = "Missing environment variable: '{}'"
             raise EnvError(error.format(key))
@@ -77,8 +88,8 @@ class Env(DotEnv):
         value : str
             The value of the variable as ``str``.
         """
-        self.dict()[key] = value
-        set_key(self.dotenv_path, key, value)
+        self.vars[key] = value
+        self._replace(key, value)
 
     def __delitem__(self, key: str) -> None:
         """
@@ -95,12 +106,12 @@ class Env(DotEnv):
             If the variable is not set.
         """
         try:
-            del self.dict()[key]
+            del self.vars[key]
         except KeyError:
             error = "Missing environment variable: '{}'"
             raise EnvError(error.format(key))
         else:
-            unset_key(self.dotenv_path, key)
+            self._replace(key, None)
 
     def __iter__(self) -> Iterator:
         """
@@ -111,7 +122,7 @@ class Env(DotEnv):
         Iterator
             An iterator of key-value pairs.
         """
-        yield from self.dict().items()
+        yield from self.vars.items()
 
     def __contains__(self, item: str) -> bool:
         """
@@ -127,7 +138,7 @@ class Env(DotEnv):
         bool
             ``True`` if the item is defined in the dotenv file.
         """
-        return item in self.dict()
+        return item in self.vars
 
     def __len__(self) -> int:
         """
@@ -138,7 +149,7 @@ class Env(DotEnv):
         int
             The number of variables defined in the dotenv file.
         """
-        return len(self.dict())
+        return len(self.vars)
 
     def __fspath__(self) -> str:
         """
@@ -151,7 +162,7 @@ class Env(DotEnv):
         str
             The path of the dotenv file.
         """
-        return self.dotenv_path
+        return self.envfile
 
     def __str__(self) -> str:
         """
@@ -173,7 +184,24 @@ class Env(DotEnv):
         str
             A string that shows the path of the dotenv file.
         """
-        return "Env('{}')".format(self.dotenv_path)
+        return "Env('{}')".format(self.envfile)
+
+    @property
+    @lru_cache()
+    def vars(self) -> Dict[str, str]:
+        """Get the environment variables as a ``dict``."""
+        def _sub_callback(match):
+            return {**environ, **envvars}.get(match.group(1), '')
+
+        with open(self.envfile, 'r') as f:
+            envvars = dict(_line.findall(f.read()))
+        for key, val in envvars.items():
+            envvars[key] = _posix_var.sub(_sub_callback, val)
+        return envvars
+
+    def setenv(self) -> None:
+        """Add the variables defined in the dotenv file to :os:`environ`."""
+        self.ENV.update(self.vars)
 
     def get(self, key: str, default: Optional[str] = None) -> Optional[str]:
         """
@@ -196,7 +224,7 @@ class Env(DotEnv):
         >>> env.get('STR_VAR', 'default')
         'value'
         """
-        return self.ENV.get(key, self.dict().get(key) or default)
+        return self.ENV.get(key, self.vars.get(key) or default)
 
     def bool(self, key: str, default: Optional[bool] = None) -> Optional[bool]:
         """
@@ -427,6 +455,30 @@ class Env(DotEnv):
             ) for _ in range(50))
             self[key] = value
         return value
+
+    def _replace(self, key: str, value: Optional[str]) -> None:
+        target = mkstemp(prefix='yaenv')[-1]
+        pattern = regex(r'^\s*{}\s*='.format(key))
+        replaced = value is None  # can't replace if there's no value
+
+        if value is not None:
+            value = value.replace('"', '\\"') \
+                .replace('\n', '\\n').replace('\t', '\\t')
+            newline = '{}="{}"\n'.format(key, value)
+
+        with open(target, 'w') as tf, open(self.envfile, 'r') as sf:
+            for line in sf:
+                if not pattern.match(line):
+                    tf.write(line)
+                elif value is not None:
+                    tf.write(newline)
+                    replaced = True
+            if not replaced:
+                if not line[-1] == '\n':
+                    tf.write('\n')  # ensure new line
+                tf.write(newline)
+
+        move(target, self.envfile)
 
 
 __all__ = ['Env', 'EnvError']

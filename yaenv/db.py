@@ -6,14 +6,15 @@ from urllib import parse as urlparse
 from .utils import is_truthy
 
 DBConfig = NewType('DBConfig', Dict[str, Any])
+DBConfig.__qualname__ = 'yaenv.db.DBConfig'
 
 # Supported schemes.
-SCHEMES: Dict[str, str] = {
+SCHEMES = {
     'mysql': 'django.db.backends.mysql',
     'oracle': 'django.db.backends.oracle',
     'pgsql': 'django.db.backends.postgresql',
     'sqlite': 'django.db.backends.sqlite3',
-}
+}  # type: Dict[str, str]
 
 # Scheme aliases.
 SCHEMES['postgresql'] = SCHEMES['pgsql']
@@ -92,7 +93,7 @@ def parse(url: str) -> DBConfig:
     })
 
     # Pass the query string into OPTIONS.
-    options: Dict[str, Any] = {}
+    options = {}  # type: Dict[str, Any]
     qs = urlparse.parse_qs(uri.query)
     for key, values in qs.items():
         if key == 'isolation':
