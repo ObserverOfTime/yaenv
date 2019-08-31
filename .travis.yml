@@ -19,7 +19,7 @@ before_install:
 install:
     - poetry install
 script:
-    - poetry run flake8 yaenv
+    - poetry run flake8 --docstring-convention=numpy yaenv
     - poetry run pytest --testdox tests
 before_deploy:
     - poetry config http-basic.pypi $PYPI_USER $PYPI_PASS

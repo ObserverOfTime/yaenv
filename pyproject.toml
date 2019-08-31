@@ -37,27 +37,31 @@ classifiers = [
 python = ">=3.5"
 
 [tool.poetry.extras]
+test = [
+    "pytest",
+    "pytest-testdox",
+]
 docs = [
     "sphinx",
     "sphinx-rtd-theme",
-    "sphinxcontrib-napoleon"
+]
+lint = [
+    "flake8",
+    "flake8-docstrings",
+    "flake8-mypy",
 ]
 
 [tool.poetry.dev-dependencies]
 # test
-pytest = "*"
-pytest-testdox = "*"
+pytest = "5.1.2"
+pytest-testdox = "1.1.1"
 # docs
-sphinx = "*"
-sphinx-rtd-theme = "*"
-sphinxcontrib-napoleon = "*"
+sphinx = "2.2.0"
+sphinx-rtd-theme = "0.4.3"
 # lint
-flake8 = "*"
-flake8-mypy = "*"
-
-[tool.poetry.dev-dependencies.flake8-docstrings]
-git = "https://github.com/alexf91/flake8-docstrings"
-branch = "numpy-style"
+flake8 = "3.7.8"
+flake8-docstrings = "1.4.0"
+flake8-mypy = "17.8.0"
 
 [tool.poetry.urls]
 "Bug tracker" = "https://github.com/ObserverOfTime/yaenv/issues"
@@ -67,8 +71,6 @@ addopts = "--testdox"
 testpaths = "tests"
 
 [tool.flake8]
-ignore = "W504"
-max_line_length = 80
 exclude = """
     .git,
     .venv,
@@ -78,8 +80,10 @@ exclude = """
     __pycache__,
     docs/conf.py,
     tests,
-    build
+    build,
+    dist
 """
+docstring_convention = "numpy"
 
 [build-system]
 requires = ["poetry==1.0.0a4"]

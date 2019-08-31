@@ -6,7 +6,7 @@ from random import SystemRandom
 from re import compile as regex, M
 from shutil import move
 from tempfile import mkstemp
-from typing import Dict, Iterator, List, Optional
+from typing import Dict, Iterator, List, Tuple, Optional
 
 from . import db, email, utils
 
@@ -113,13 +113,13 @@ class Env:
         else:
             self._replace(key, None)
 
-    def __iter__(self) -> Iterator:
+    def __iter__(self) -> Iterator[Tuple[str, str]]:
         """
         Iterate through the entries in the dotenv file.
 
         Returns
         -------
-        Iterator
+        Iterator[Tuple[str, str]]
             An iterator of key-value pairs.
         """
         yield from self.vars.items()
@@ -189,7 +189,7 @@ class Env:
     @property
     @lru_cache()
     def vars(self) -> Dict[str, str]:
-        """Get the environment variables as a ``dict``."""
+        """`Dict[str, str]` : Get the environment variables as a ``dict``."""
         def _sub_callback(match):
             return {**environ, **envvars}.get(match.group(1), '')
 

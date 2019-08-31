@@ -1,0 +1,2 @@
+# force RTD to use Sphinx 2.2
+sphinx==2.2.0
