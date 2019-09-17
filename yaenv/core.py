@@ -3,7 +3,8 @@
 from functools import lru_cache
 from os import environ, path
 from random import SystemRandom
-from re import compile as regex, M
+from re import compile as regex
+from shlex import shlex
 from shutil import move
 from tempfile import mkstemp
 from typing import Dict, Iterator, List, Tuple, Optional
@@ -11,17 +12,155 @@ from typing import Dict, Iterator, List, Tuple, Optional
 from . import db, email, utils
 
 
-_line = regex(r'^\s*(\w+)\s*=\s*["\']?([^"\'].*)?["\']?', M)
-_posix_var = regex(r'\$\{([^}].*)?\}')
-
-
 class EnvError(Exception):
     """Exception class representing a dotenv error."""
 
 
+class EnvVar:
+    """
+    Class that represents an environment variable.
+
+    Attributes
+    ----------
+    key : str
+        The key of the variable.
+    value : str
+        The value of the variable.
+    """
+
+    def __new__(cls, line: str):
+        """
+        Parse a line and return a new instance or ``None``.
+
+        Parameters
+        ----------
+        line : str
+            The line to be parsed.
+
+        Returns
+        -------
+        Optional[EnvVar]
+            Returns a new ``EnvVar`` if all went well, or ``None``
+            if the line doesn't contain a variable declaration.
+
+        Raises
+        ------
+        EnvError
+            If the line cannot be parsed.
+
+        Examples
+        --------
+        >>> print(repr(EnvVar('example=???')))
+        EnvVar('example', '???')
+        >>> print(repr(EnvVar('# comment')))
+        None
+        """
+        lex = shlex(line)
+
+        key = lex.read_token()
+        if not key:
+            return None
+
+        # invalid key
+        if (
+            not all(c in lex.wordchars for c in key)
+            or not lex.get_token() == '='
+            or key == '_' or key[0] in '0123456789'
+        ):
+            error = 'Invalid key in line: {}'
+            raise EnvError(error.format(line))
+
+        lex.whitespace_split = True
+        try:
+            value = lex.read_token()
+        except ValueError:
+            error = 'Mismatched quotes in line: {}'
+            raise EnvError(error.format(line))
+
+        # surplus token after value
+        if lex.read_token():
+            error = 'Surplus token in line: {}'
+            raise EnvError(error.format(line))
+
+        instance = super(EnvVar, cls).__new__(cls)
+        instance.key = key
+
+        # blank value
+        if value == '':
+            instance.value = value
+            instance._interpolate = False
+            return instance
+
+        # double-quoted value
+        if value[0] == '"' or value[-1] == '"':
+            if not value[0] == value[-1]:
+                error = 'Mismatched quotes in line: {}'
+                raise EnvError(error.format(line))
+            instance.value = value[1:-1]
+            instance._interpolate = True
+            return instance
+
+        # single-quoted value
+        if value[0] == "'" or value[-1] == "'":
+            if not value[0] == value[-1]:
+                error = 'Mismatched quotes in line: {}'
+                raise EnvError(error.format(line))
+            instance.value = value[1:-1]
+            instance._interpolate = False
+            return instance
+
+        instance.value = value
+        instance._interpolate = True
+        return instance
+
+    def __bool__(self) -> bool:
+        """
+        Return whether the variable can be interpolated or not.
+
+        Returns
+        -------
+        bool
+            ``True`` unless the value is blank or enclosed in single quotes.
+        """
+        return self._interpolate
+
+    def __iter__(self) -> Iterator[str]:
+        """
+        Iterate through the tokens of the variable.
+
+        Returns
+        -------
+        Iterator[str]
+            An iterator containing the key and value.
+        """
+        yield from (self.key, self.value)
+
+    def __str__(self) -> str:
+        """
+        Return the variable as a string.
+
+        Returns
+        -------
+        str
+            The value of the variable.
+        """
+        return self.value
+
+    def __repr__(self) -> str:
+        """
+        Return a string representing the object.
+
+        Returns
+        -------
+        str
+            A string that shows the key and value of the variable.
+        """
+        return "EnvVar('{0.key}', '{0.value}')".format(self)
+
+
 class Env:
     """
-    Class used to parse and access environment variables.
+    Class used to parse dotenv files and access their variables.
 
     Attributes
     ----------
@@ -37,7 +176,7 @@ class Env:
 
     Examples
     --------
-    >>> open('.env').read()
+    >>> print(open('.env').read())
     STR_VAR=value
     LIST_VAR=item1:item2
     SECRET_KEY=notsosecret
@@ -191,13 +330,18 @@ class Env:
     def vars(self) -> Dict[str, str]:
         """`Dict[str, str]` : Get the environment variables as a ``dict``."""
         def _sub_callback(match):
-            return {**environ, **envvars}.get(match.group(1), '')
+            return {**environ, **result}.get(match.group(1), '')
 
         with open(self.envfile, 'r') as f:
-            envvars = dict(_line.findall(f.read()))
-        for key, val in envvars.items():
-            envvars[key] = _posix_var.sub(_sub_callback, val)
-        return envvars
+            envvars = list(filter(None.__ne__, map(EnvVar, f.readlines())))
+            result = dict(envvars)
+
+        # substitute variables that can be interpolated
+        posix = regex(r'\$\{([^}].*)?\}')
+        for var in filter(bool, envvars):
+            result[var.key] = posix.sub(_sub_callback, var.value)
+
+        return result
 
     def setenv(self) -> None:
         """Add the variables defined in the dotenv file to :os:`environ`."""
@@ -481,4 +625,4 @@ class Env:
         move(target, self.envfile)
 
 
-__all__ = ['Env', 'EnvError']
+__all__ = ['Env', 'EnvError', 'EnvVar']

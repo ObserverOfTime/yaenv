@@ -11,7 +11,7 @@ def env():
     return yaenv.Env('tests/.env')
 
 
-@pytest.mark.describe('Test Env parser')
+@pytest.mark.describe('Test .env file parser')
 class TestEnv:
 
     @pytest.mark.it('it can get environment variables')
@@ -176,3 +176,80 @@ class TestEnvDjango:
         assert _secret is not None
         assert _secret != env.secret('NEW_SECRET_KEY2')
         del env['NEW_SECRET_KEY'], env['NEW_SECRET_KEY2']
+
+
+@pytest.mark.describe('Test line parser')
+class TestEnvVar:
+
+    @pytest.mark.it('it can parse unquoted variables')
+    def test_unquoted(self):
+        e = yaenv.core.EnvVar('key=value\n')
+        assert e.key == 'key'
+        assert e.value == 'value'
+        assert e._interpolate
+
+    @pytest.mark.it('it can parse double-quoted variables')
+    def test_double_quoted(self):
+        e = yaenv.core.EnvVar('key="value"\n')
+        assert e.key == 'key'
+        assert e.value == 'value'
+        assert e._interpolate
+
+    @pytest.mark.it('it can parse single-quoted variables')
+    def test_single_quoted(self):
+        e = yaenv.core.EnvVar("key='value'\n")
+        assert e.key == 'key'
+        assert e.value == 'value'
+        assert not e._interpolate
+
+    @pytest.mark.it('it can parse blank variables')
+    def test_blank(self):
+        assert yaenv.core.EnvVar('key=').value == ''
+        assert yaenv.core.EnvVar('key=""').value == ''
+        assert yaenv.core.EnvVar("key=''").value == ''
+        assert yaenv.core.EnvVar('key= ').value == ''
+
+    @pytest.mark.it('it ignores blank lines')
+    def test_blank(self):
+        assert yaenv.core.EnvVar('\n') is None
+        assert yaenv.core.EnvVar(' \t ') is None
+        assert yaenv.core.EnvVar('# comment') is None
+
+    @pytest.mark.it('it raises EnvError for invalid keys')
+    def test_invalid_key(self):
+        with pytest.raises(yaenv.EnvError) as err:
+            _ = yaenv.core.EnvVar('221b="starts with number"')
+        assert 'Invalid key' in str(err.value)
+        with pytest.raises(yaenv.EnvError) as err:
+            _ = yaenv.core.EnvVar('_="not assignable"')
+        assert 'Invalid key' in str(err.value)
+        with pytest.raises(yaenv.EnvError) as err:
+            _ = yaenv.core.EnvVar('o-o="invalid character"')
+        assert 'Invalid key' in str(err.value)
+
+    @pytest.mark.it('it raises EnvError for mismatched quotes')
+    def test_mismatched_quote(self):
+        with pytest.raises(yaenv.EnvError) as err:
+            _ = yaenv.core.EnvVar('double="missing-closing')
+        assert 'Mismatched quotes' in str(err.value)
+        with pytest.raises(yaenv.EnvError) as err:
+            _ = yaenv.core.EnvVar('double=missing-opening"')
+        assert 'Mismatched quotes' in str(err.value)
+        with pytest.raises(yaenv.EnvError) as err:
+            _ = yaenv.core.EnvVar("single='missing-closing")
+        assert 'Mismatched quotes' in str(err.value)
+        with pytest.raises(yaenv.EnvError) as err:
+            _ = yaenv.core.EnvVar("single=missing-opening'")
+        assert 'Mismatched quotes' in str(err.value)
+        with pytest.raises(yaenv.EnvError) as err:
+            _ = yaenv.core.EnvVar("both=\"mismatched'")
+        assert 'Mismatched quotes' in str(err.value)
+        with pytest.raises(yaenv.EnvError) as err:
+            _ = yaenv.core.EnvVar("both='mismatched\"")
+        assert 'Mismatched quotes' in str(err.value)
+
+    @pytest.mark.it('it raises EnvError for surplus tokens')
+    def test_surplus_token(self):
+        with pytest.raises(yaenv.EnvError) as err:
+            _ = yaenv.core.EnvVar('surplus=this must be quoted')
+        assert 'Surplus token' in str(err.value)
