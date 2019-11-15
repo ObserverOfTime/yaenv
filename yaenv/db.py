@@ -9,16 +9,16 @@ DBConfig = NewType('DBConfig', Dict[str, Any])
 DBConfig.__qualname__ = 'yaenv.db.DBConfig'
 
 # Supported schemes.
-SCHEMES = {
+SCHEMES: Dict[str, str] = {
     'mysql': 'django.db.backends.mysql',
     'oracle': 'django.db.backends.oracle',
     'pgsql': 'django.db.backends.postgresql',
     'sqlite': 'django.db.backends.sqlite3',
-}  # type: Dict[str, str]
+}
 
 # Scheme aliases.
-SCHEMES['postgresql'] = SCHEMES['pgsql']
 SCHEMES['postgres'] = SCHEMES['pgsql']
+SCHEMES['postgresql'] = SCHEMES['pgsql']
 SCHEMES['sqlite3'] = SCHEMES['sqlite']
 
 # Register database schemes in URLs.
@@ -93,7 +93,7 @@ def parse(url: str) -> DBConfig:
     })
 
     # Pass the query string into OPTIONS.
-    options = {}  # type: Dict[str, Any]
+    options: Dict[str, Any] = {}
     qs = urlparse.parse_qs(uri.query)
     for key, values in qs.items():
         if key == 'isolation':
@@ -106,7 +106,7 @@ def parse(url: str) -> DBConfig:
             }.get(values[-1], None)
             continue
         if key == 'search_path':
-            options['options'] = '-c search_path={}'.format(values[-1])
+            options['options'] = f'-c search_path={values[-1]}'
             continue
         if key in ('autocommit', 'atomic_requests'):
             config[key.upper()] = is_truthy(values[-1])

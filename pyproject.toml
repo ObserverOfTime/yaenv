@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "yaenv"
-version = "1.1.0"
+version = "1.2.0"
 readme = "README.rst"
 license = "BSD-3-Clause"
 description = "Yet another dotenv parser for Python."
@@ -8,9 +8,6 @@ homepage = "https://github.com/ObserverOfTime/yaenv"
 documentation = "https://yaenv.readthedocs.io"
 authors = [
     "ObserverOfTime <chronobserver@disroot.org>",
-]
-packages = [
-    {include = "yaenv"},
 ]
 keywords = [
     "12factor",
@@ -33,13 +30,34 @@ classifiers = [
     "Programming Language :: Python :: 3.7",
 ]
 
+[[tool.poetry.packages]]
+include = "yaenv"
+
 [tool.poetry.dependencies]
-python = ">=3.5"
+python = "^3.6"
+
+[tool.poetry.dependencies.cached-property]
+version = "1.5.1"
+python = "<3.8"
+
+[tool.poetry.dev-dependencies]
+pytest = "5.1.2"
+pytest-cov = "2.8.1"
+sphinx = "2.2.0"
+sphinx-rtd-theme = "0.4.3"
+flake8 = "3.7.8"
+flake8-docstrings = "1.4.0"
+flake8-mypy = "17.8.0"
+
+[tool.poetry.dev-dependencies.pytest-pspec]
+git = "https://github.com/ROpdebee/pytest-pspec"
+branch = "aad7ff1"
 
 [tool.poetry.extras]
 test = [
     "pytest",
-    "pytest-testdox",
+    "pytest-cov",
+    "pytest-pspec",
 ]
 docs = [
     "sphinx",
@@ -51,40 +69,24 @@ lint = [
     "flake8-mypy",
 ]
 
-[tool.poetry.dev-dependencies]
-# test
-pytest = "5.1.2"
-pytest-testdox = "1.1.1"
-# docs
-sphinx = "2.2.0"
-sphinx-rtd-theme = "0.4.3"
-# lint
-flake8 = "3.7.8"
-flake8-docstrings = "1.4.0"
-flake8-mypy = "17.8.0"
-
 [tool.poetry.urls]
 "Bug tracker" = "https://github.com/ObserverOfTime/yaenv/issues"
 
 [tool.pytest]
-addopts = "--testdox"
+addopts = "--pspec --cov-report=term --cov=yaenv"
 testpaths = "tests"
 
 [tool.flake8]
 exclude = """
     .git,
-    .venv,
-    venv,
-    .env,
-    env,
+    .venv,venv,
+    build,dist,
     __pycache__,
     docs/conf.py,
-    tests,
-    build,
-    dist
+    tests/*,
 """
 docstring_convention = "numpy"
 
 [build-system]
-requires = ["poetry==1.0.0a4"]
+requires = ["poetry==1.0.0b3"]
 build-backend = "poetry.masonry.api"

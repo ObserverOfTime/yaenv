@@ -1,10 +1,15 @@
 """Useful utilities."""
 
+from sys import version_info
 from typing import Any
 
 _truthy = ('1', 'on', 'y', 'yes', 'true')
 
 _falsy = ('', '0', 'off', 'n', 'no', 'false')
+
+cached_property = __import__(
+    'functools' if version_info >= (3, 8) else 'cached_property'
+).cached_property
 
 
 def is_truthy(arg: Any) -> bool:
@@ -55,4 +60,4 @@ def is_falsy(arg: Any) -> bool:
     return str(arg).lower() in _falsy
 
 
-__all__ = ['is_truthy', 'is_falsy']
+__all__ = ['is_truthy', 'is_falsy', 'cached_property']

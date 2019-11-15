@@ -1,13 +1,12 @@
 """Environment variable parser."""
 
-from functools import lru_cache
-from os import environ, path
-from random import SystemRandom
-from re import compile as regex
+from os import PathLike, environ, fspath, path
+from secrets import token_urlsafe
 from shlex import shlex
+from re import compile as regex
 from shutil import move
 from tempfile import mkstemp
-from typing import Dict, Iterator, List, Tuple, Optional
+from typing import Dict, Iterator, List, Optional, Tuple, Union
 
 from . import db, email, utils
 
@@ -28,7 +27,7 @@ class EnvVar:
         The value of the variable.
     """
 
-    def __new__(cls, line: str):
+    def __new__(cls, line: str) -> Optional['EnvVar']:
         """
         Parse a line and return a new instance or ``None``.
 
@@ -64,38 +63,34 @@ class EnvVar:
         # invalid key
         if (
             not all(c in lex.wordchars for c in key)
-            or not lex.get_token() == '='
+            or lex.get_token() != '='
             or key == '_' or key[0] in '0123456789'
         ):
-            error = 'Invalid key in line: {}'
-            raise EnvError(error.format(line))
+            raise EnvError(f'Invalid key in line: {line}')
 
         lex.whitespace_split = True
         try:
             value = lex.read_token()
-        except ValueError:
-            error = 'Mismatched quotes in line: {}'
-            raise EnvError(error.format(line))
+        except ValueError as e:
+            raise EnvError(f'Mismatched quotes in line: {line}') from e
 
         # surplus token after value
         if lex.read_token():
-            error = 'Surplus token in line: {}'
-            raise EnvError(error.format(line))
+            raise EnvError(f'Surplus token in line: {line}')
 
         instance = super(EnvVar, cls).__new__(cls)
         instance.key = key
 
         # blank value
-        if value == '':
-            instance.value = value
+        if not value:
+            instance.value = ''
             instance._interpolate = False
             return instance
 
         # double-quoted value
         if value[0] == '"' or value[-1] == '"':
             if not value[0] == value[-1]:
-                error = 'Mismatched quotes in line: {}'
-                raise EnvError(error.format(line))
+                raise EnvError(f'Mismatched quotes in line: {line}')
             instance.value = value[1:-1]
             instance._interpolate = True
             return instance
@@ -103,8 +98,7 @@ class EnvVar:
         # single-quoted value
         if value[0] == "'" or value[-1] == "'":
             if not value[0] == value[-1]:
-                error = 'Mismatched quotes in line: {}'
-                raise EnvError(error.format(line))
+                raise EnvError(f'Mismatched quotes in line: {line}')
             instance.value = value[1:-1]
             instance._interpolate = False
             return instance
@@ -133,9 +127,10 @@ class EnvVar:
         Iterator[str]
             An iterator containing the key and value.
         """
-        yield from (self.key, self.value)
+        yield self.key
+        yield self.value
 
-    def __str__(self) -> str:
+    def __str__(self) -> str:  # pragma: no cover
         """
         Return the variable as a string.
 
@@ -146,7 +141,7 @@ class EnvVar:
         """
         return self.value
 
-    def __repr__(self) -> str:
+    def __repr__(self) -> str:  # pragma: no cover
         """
         Return a string representing the object.
 
@@ -155,10 +150,10 @@ class EnvVar:
         str
             A string that shows the key and value of the variable.
         """
-        return "EnvVar('{0.key}', '{0.value}')".format(self)
+        return f"EnvVar('{self.key}', '{self.value}')"
 
 
-class Env:
+class Env(PathLike):
     """
     Class used to parse dotenv files and access their variables.
 
@@ -166,12 +161,12 @@ class Env:
     ----------
     ENV : os._Environ
         A reference to :os:`environ`.
-    envfile : str
+    envfile : Union[str, :os:`PathLike`]
         The dotenv file of the object.
 
     Parameters
     ----------
-    envfile : str
+    envfile : Union[str, :os:`PathLike`]
         The path to a dotenv file.
 
     Examples
@@ -183,11 +178,9 @@ class Env:
     >>> env = Env('.env')
     """
 
-    def __init__(self, envfile: str) -> None:
+    def __init__(self, envfile: Union[str, PathLike]) -> None:
         if not path.isfile(envfile):
-            error = "File '{}' does not exist"
-            raise EnvError(error.format(envfile))
-
+            raise EnvError(f"File '{envfile}' does not exist")
         self.envfile = envfile
         self.ENV = environ
 
@@ -212,8 +205,7 @@ class Env:
         """
         value = self.vars.get(key)
         if value is None:
-            error = "Missing environment variable: '{}'"
-            raise EnvError(error.format(key))
+            raise EnvError(f"Missing environment variable: '{key}'")
         return value
 
     def __setitem__(self, key: str, value: str) -> None:
@@ -247,8 +239,7 @@ class Env:
         try:
             del self.vars[key]
         except KeyError:
-            error = "Missing environment variable: '{}'"
-            raise EnvError(error.format(key))
+            raise EnvError(f"Missing environment variable: '{key}'")
         else:
             self._replace(key, None)
 
@@ -275,7 +266,7 @@ class Env:
         Returns
         -------
         bool
-            ``True`` if the item is defined in the dotenv file.
+            ``True`` if the variable is defined.
         """
         return item in self.vars
 
@@ -292,18 +283,18 @@ class Env:
 
     def __fspath__(self) -> str:
         """
-        Return the file system representation of the path.
+        Return the file system representation of the object.
 
-        This method is used by :os:`fspath` (Python 3.6+).
+        This method is used by :os:`fspath`.
 
         Returns
         -------
         str
             The path of the dotenv file.
         """
-        return self.envfile
+        return fspath(self.envfile)
 
-    def __str__(self) -> str:
+    def __str__(self) -> str:  # pragma: no cover
         """
         Return a string representing the environment variables.
 
@@ -312,9 +303,9 @@ class Env:
         str
             The key-value pairs defined in the dotenv file as lines.
         """
-        return '\n'.join(map('{0[0]}="{0[1]}"'.format, self))
+        return '\n'.join(f'{k}="{v}"' for k, v in self)
 
-    def __repr__(self) -> str:
+    def __repr__(self) -> str:  # pragma: no cover
         """
         Return a string representing the object.
 
@@ -323,14 +314,13 @@ class Env:
         str
             A string that shows the path of the dotenv file.
         """
-        return "Env('{}')".format(self.envfile)
+        return f"Env('{self.envfile}')"
 
-    @property
-    @lru_cache()
+    @utils.cached_property
     def vars(self) -> Dict[str, str]:
         """`Dict[str, str]` : Get the environment variables as a ``dict``."""
         def _sub_callback(match):
-            return {**environ, **result}.get(match.group(1), '')
+            return {**self.ENV, **result}.get(match.group(1), '')
 
         with open(self.envfile, 'r') as f:
             envvars = list(filter(None.__ne__, map(EnvVar, f.readlines())))
@@ -405,7 +395,7 @@ class Env:
             return True
         if utils.is_falsy(value):
             return False
-        raise EnvError("Invalid boolean value: '{}'".format(value))
+        raise EnvError(f"Invalid boolean value: '{value}'")
 
     def int(self, key: str, default: Optional[int] = None) -> Optional[int]:
         """
@@ -439,7 +429,7 @@ class Env:
         try:
             return int(value)
         except ValueError:
-            raise EnvError("Invalid integer value: '{}'".format(value))
+            raise EnvError(f"Invalid integer value: '{value}'")
 
     def float(self, key: str, default:
               Optional[float] = None) -> Optional[float]:
@@ -474,7 +464,7 @@ class Env:
         try:
             return float(value)
         except ValueError:
-            raise EnvError("Invalid numerical value: '{}'".format(value))
+            raise EnvError(f"Invalid numerical value: '{value}'")
 
     def list(self, key: str, default: Optional[List] = None,
              separator: str = ',') -> Optional[List]:
@@ -538,8 +528,8 @@ class Env:
             return None
         try:
             return db.parse(value)
-        except Exception:
-            raise EnvError("Invalid database URL: '{}'".format(value))
+        except Exception as e:
+            raise EnvError(f"Invalid database URL: '{value}'") from e
 
     def email(self, key: str, default:
               Optional[str] = None) -> Optional[email.EmailConfig]:
@@ -572,8 +562,8 @@ class Env:
             return None
         try:
             return email.parse(value)
-        except Exception:
-            raise EnvError("Invalid e-mail URL: '{}'".format(value))
+        except Exception as e:
+            raise EnvError(f"Invalid e-mail URL: '{value}'") from e
 
     def secret(self, key: str = 'SECRET_KEY') -> str:
         """
@@ -589,26 +579,23 @@ class Env:
         Returns
         -------
         str
-            A random string.
+            The value of the key or a random string.
         """
         value = self.get(key)
         if not value:
-            random = SystemRandom().choice
-            value = ''.join(random(
-                'abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)'
-            ) for _ in range(50))
-            self[key] = value
+            value = token_urlsafe(37)
+            self.vars[key] = value
         return value
 
     def _replace(self, key: str, value: Optional[str]) -> None:
         target = mkstemp(prefix='yaenv')[-1]
-        pattern = regex(r'^\s*{}\s*='.format(key))
+        pattern = regex(fr'^\s*{key}\s*=')
         replaced = value is None  # can't replace if there's no value
 
         if value is not None:
             value = value.replace('"', '\\"') \
                 .replace('\n', '\\n').replace('\t', '\\t')
-            newline = '{}="{}"\n'.format(key, value)
+            newline = f'{key}="{value}"\n'
 
         with open(target, 'w') as tf, open(self.envfile, 'r') as sf:
             for line in sf:
@@ -618,7 +605,7 @@ class Env:
                     tf.write(newline)
                     replaced = True
             if not replaced:
-                if not line[-1] == '\n':
+                if not line[-1] == '\n':  # TODO: coverage
                     tf.write('\n')  # ensure new line
                 tf.write(newline)
 

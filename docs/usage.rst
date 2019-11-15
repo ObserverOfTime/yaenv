@@ -14,7 +14,9 @@ Access variables
 
 .. code:: python
 
+   # raises EnvError if missing
    password = env['PASSWORD']
+   # returns 'user' if missing
    username = env.get('USERNAME', default='user')
 
 Set variables
@@ -78,7 +80,7 @@ And more
 
    # Iterate over the variables in the file
    for key, val in env:
-      print('{}: {}'.format(key, val))
+      print(f'{key}: {val}')
 
    # Add the variables to os.environ
    env.setenv()

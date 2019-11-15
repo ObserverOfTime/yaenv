@@ -1,7 +1,7 @@
 yaenv
 =====
 
-|pypi| |rtd| |travis|
+|pypi| |rtd| |travis| |codecov|
 
 .. |pypi| image:: https://img.shields.io/pypi/v/yaenv.svg?logo=python
    :target: https://pypi.org/project/yaenv/
@@ -14,6 +14,10 @@ yaenv
 .. |travis| image:: https://img.shields.io/travis/ObserverOfTime/yaenv.svg?logo=travis
    :target: https://travis-ci.org/ObserverOfTime/yaenv
    :alt: Travis CI
+
+.. |codecov| image:: https://img.shields.io/codecov/c/gh/ObserverOfTime/yaenv?logo=codecov
+   :target: https://codecov.io/gh/ObserverOfTime/yaenv
+   :alt: Codecov
 
 Because none of the dozen dotenv parsers for Python fit all my use cases.
 

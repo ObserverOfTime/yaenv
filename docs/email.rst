@@ -10,9 +10,9 @@ Schemes
 * dummy: ``django.core.mail.backends.dummy.EmailBackend``
 * file: ``django.core.mail.backends.filebased.EmailBackend``
 * memory: ``django.core.mail.backends.locmem.EmailBackend``
+* smtp: ``django.core.mail.backends.smtp.EmailBackend``
 * smtp+ssl: ``django.core.mail.backends.smtp.EmailBackend``
 * smtp+tls: ``django.core.mail.backends.smtp.EmailBackend``
-* smtp: ``django.core.mail.backends.smtp.EmailBackend``
 
 Parameters
 ----------

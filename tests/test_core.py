@@ -1,5 +1,3 @@
-from sys import version_info
-
 import pytest
 
 import yaenv
@@ -11,21 +9,24 @@ def env():
     return yaenv.Env('tests/.env')
 
 
-@pytest.mark.describe('Test .env file parser')
 class TestEnv:
+    """Dotenv file parser"""
 
-    @pytest.mark.it('it can get environment variables')
     def test_getitem(self, env: yaenv.Env):
+        """it can get environment variables"""
         assert env['BLANK'] == ''
         assert env['DOMAIN'] == 'example.com'
 
-    @pytest.mark.it('it can set environment variables')
     def test_setitem(self, env: yaenv.Env):
+        """it can set environment variables"""
+        assert 'NEW_VAR' not in env
         env['NEW_VAR'] = 'new_var'
         assert env['NEW_VAR'] == 'new_var'
+        env['NEW_VAR'] = 'newer var'
+        assert env['NEW_VAR'] == 'newer var'
 
-    @pytest.mark.it('it can unset environment variables')
     def test_delitem(self, env: yaenv.Env):
+        """it can unset environment variables"""
         assert 'NEW_VAR' in env
         del env['NEW_VAR']
         assert 'NEW_VAR' not in env
@@ -33,54 +34,53 @@ class TestEnv:
             del env['NEW_VAR']
         assert 'Missing' in str(err.value)
 
-    @pytest.mark.it('it can iterate over key-value pairs')
     def test_iter(self, env: yaenv.Env):
-        for key, val in env:
+        """it can iterate over key-value pairs"""
+        for i, (key, val) in enumerate(env, 1):
             assert env[key] == val
+        assert len(env) == i
 
-    @pytest.mark.it('it can interpolate variables')
     def test_interpolation(self, env: yaenv.Env):
+        """it can interpolate variables"""
         assert env['EMAIL'] == 'user@' + env['DOMAIN']
 
-    @pytest.mark.it('it can update os.environ')
     def test_setenv(self, env: yaenv.Env):
+        """it can update os.environ"""
         from os import environ
         assert 'EMAIL' not in environ
         env.setenv()
         assert 'EMAIL' in environ
 
-    @pytest.mark.skipif(version_info < (3, 6), reason='requires Python 3.6+')
-    @pytest.mark.it('it returns the file system path of the dotenv file')
     def test_fspath(self, env: yaenv.Env):
+        """it returns the file system path of the dotenv file"""
         from os import fspath
         from filecmp import cmp
         assert fspath(env) == 'tests/.env'
         assert cmp(env, 'tests/.env')
 
-    @pytest.mark.it('it returns default values for optional variables')
     def test_get(self, env: yaenv.Env):
+        """it returns default values for optional variables"""
         assert env.get('BLANK', 'default') == ''
         assert env.get('MISSING') is None
         assert env.get('MISSING', 'default') == 'default'
 
-    @pytest.mark.it('it raises EnvError for missing required variables')
     def test_getitem_missing(self, env: yaenv.Env):
+        """it raises EnvError for missing required variables"""
         with pytest.raises(yaenv.EnvError) as err:
             _ = env['MISSING']
         assert 'Missing' in str(err.value)
 
-    @pytest.mark.it('it raises EnvError for an invalid dotenv file')
     def test_invalid_envfile(self):
+        """it raises EnvError for an invalid dotenv file"""
         with pytest.raises(yaenv.EnvError) as err:
             _ = yaenv.Env('/invalidfile')
         assert 'does not exist' in str(err.value)
 
-
-@pytest.mark.describe('Test type-casting')
 class TestEnvCasting:
+    """Type-casting"""
 
-    @pytest.mark.it('it can cast to bool')
     def test_bool(self, env: yaenv.Env):
+        """it can cast to bool"""
         _val = env.bool('BOOL_VAR')
         assert not _val and type(_val) == bool
         _val = env.bool('INT_VAR')
@@ -92,8 +92,8 @@ class TestEnvCasting:
         assert 'Invalid boolean' in str(err.value)
         assert env.bool('MISSING') is None
 
-    @pytest.mark.it('it can cast to int')
     def test_int(self, env: yaenv.Env):
+        """it can cast to int"""
         _val = env.int('INT_VAR')
         assert _val == 1 and type(_val) == int
         _val = env.int('MISSING', -2)
@@ -103,8 +103,8 @@ class TestEnvCasting:
         assert 'Invalid integer' in str(err.value)
         assert env.int('MISSING') is None
 
-    @pytest.mark.it('it can cast to float')
     def test_float(self, env: yaenv.Env):
+        """it can cast to float"""
         _val = env.float('FLOAT_VAR')
         assert _val == 10.0 and type(_val) == float
         _val = env.float('MISSING', -3.1)
@@ -114,8 +114,8 @@ class TestEnvCasting:
         assert 'Invalid numerical' in str(err.value)
         assert env.float('MISSING') is None
 
-    @pytest.mark.it('it can cast to list')
     def test_list(self, env: yaenv.Env):
+        """it can cast to list"""
         _val = env.list('LIST_VAR', separator=':')
         _expect = ['item1', 'item2']
         assert _val == _expect and type(_val) == list
@@ -125,11 +125,11 @@ class TestEnvCasting:
         assert env.list('MISSING') is None
 
 
-@pytest.mark.describe('Test Django integration')
 class TestEnvDjango:
+    """Django integration"""
 
-    @pytest.mark.it('it can parse database URLs')
     def test_db(self, env: yaenv.Env):
+        """it can parse database URLs"""
         _db = {
             'ENGINE': yaenv.db.SCHEMES['sqlite'],
             'NAME': 'db.sqlite3',
@@ -149,8 +149,8 @@ class TestEnvDjango:
         assert 'Invalid database' in str(err.value)
         assert env.db('MISSING') is None
 
-    @pytest.mark.it('it can parse e-mail URLs')
     def test_email(self, env: yaenv.Env):
+        """it can parse e-mail URLs"""
         _email = {
             'EMAIL_BACKEND': yaenv.email.SCHEMES['dummy'],
             'EMAIL_HOST_USER': '',
@@ -168,8 +168,8 @@ class TestEnvDjango:
         assert 'Invalid e-mail' in str(err.value)
         assert env.email('MISSING') is None
 
-    @pytest.mark.it('it can get and generate secret keys')
     def test_secret(self, env: yaenv.Env):
+        """it can get and generate secret keys"""
         assert env.secret() == 'notsosecret'
         assert 'NEW_SECRET_KEY' not in env
         _secret = env.secret('NEW_SECRET_KEY')
@@ -178,45 +178,45 @@ class TestEnvDjango:
         del env['NEW_SECRET_KEY'], env['NEW_SECRET_KEY2']
 
 
-@pytest.mark.describe('Test line parser')
 class TestEnvVar:
+    """Variable declaration parser"""
 
-    @pytest.mark.it('it can parse unquoted variables')
     def test_unquoted(self):
-        e = yaenv.core.EnvVar('key=value\n')
+        """it can parse unquoted variables"""
+        e = yaenv.core.EnvVar('key = value\n')
         assert e.key == 'key'
         assert e.value == 'value'
         assert e._interpolate
 
-    @pytest.mark.it('it can parse double-quoted variables')
     def test_double_quoted(self):
-        e = yaenv.core.EnvVar('key="value"\n')
+        """it can parse double-quoted variables"""
+        e = yaenv.core.EnvVar('key = "value"\n')
         assert e.key == 'key'
         assert e.value == 'value'
         assert e._interpolate
 
-    @pytest.mark.it('it can parse single-quoted variables')
     def test_single_quoted(self):
-        e = yaenv.core.EnvVar("key='value'\n")
+        """it can parse single-quoted variables"""
+        e = yaenv.core.EnvVar("key = 'value'\n")
         assert e.key == 'key'
         assert e.value == 'value'
         assert not e._interpolate
 
-    @pytest.mark.it('it can parse blank variables')
     def test_blank(self):
+        """it can parse blank variables"""
         assert yaenv.core.EnvVar('key=').value == ''
         assert yaenv.core.EnvVar('key=""').value == ''
         assert yaenv.core.EnvVar("key=''").value == ''
         assert yaenv.core.EnvVar('key= ').value == ''
 
-    @pytest.mark.it('it ignores blank lines')
     def test_blank(self):
+        """it ignores blank lines"""
         assert yaenv.core.EnvVar('\n') is None
         assert yaenv.core.EnvVar(' \t ') is None
         assert yaenv.core.EnvVar('# comment') is None
 
-    @pytest.mark.it('it raises EnvError for invalid keys')
     def test_invalid_key(self):
+        """it raises EnvError for invalid keys"""
         with pytest.raises(yaenv.EnvError) as err:
             _ = yaenv.core.EnvVar('221b="starts with number"')
         assert 'Invalid key' in str(err.value)
@@ -227,8 +227,8 @@ class TestEnvVar:
             _ = yaenv.core.EnvVar('o-o="invalid character"')
         assert 'Invalid key' in str(err.value)
 
-    @pytest.mark.it('it raises EnvError for mismatched quotes')
     def test_mismatched_quote(self):
+        """it raises EnvError for mismatched quotes"""
         with pytest.raises(yaenv.EnvError) as err:
             _ = yaenv.core.EnvVar('double="missing-closing')
         assert 'Mismatched quotes' in str(err.value)
@@ -248,8 +248,8 @@ class TestEnvVar:
             _ = yaenv.core.EnvVar("both='mismatched\"")
         assert 'Mismatched quotes' in str(err.value)
 
-    @pytest.mark.it('it raises EnvError for surplus tokens')
     def test_surplus_token(self):
+        """it raises EnvError for surplus tokens"""
         with pytest.raises(yaenv.EnvError) as err:
             _ = yaenv.core.EnvVar('surplus=this must be quoted')
         assert 'Surplus token' in str(err.value)

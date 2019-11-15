@@ -1,33 +1,36 @@
-dist: xenial
+os: linux
+dist: bionic
 language: python
-python:
-    - 3.5
-    - 3.6
-    - 3.7
-env:
-    global:
-        - secure: e1OhL0DCpggKLsS0M2GPWy9bgFkQaxI014bTXrGLJYfmSjPJD+4GaLmd0l1cXVWq7uQNIyuyMME60Wwe9+PKd0cCmv6e40nkuKIZU+7g1MK6aPHRsO5exQMxpYMy07fpD0QrgL/rh8V3YX2rxABzE5LzLxOsEjSZbvbw30SlONlPuVHr7G1dbniZihYptThBSOW0qNIkbonzImkP4Bhdes7/w0BebNzWVvc+fMQOZmTA6pvXLdbrOVnj/Ln81dvtpYVGeVjlTiCnkB/G9jeP7nlVfFD2l407EuK1cOCArR+0mhF1XiSy5ajzoylDv+bkRZcPapFoHWst3QQG/6AD0dpiGx/84/30lLkxx0+p2wdKr0FI7RqKzqn8Vt9h6yb234Nr1c1LLBXiIoIk3JaaZgSCZj2MtXOnxVIhnW7xtX/Gto+mWUQfK0zN2sl9R6X5V9Ibk98W5UmsdLp+2QYvAoLmPyZruruTIwRv+vvuBrBWnLoV6BWX8cc9BEaxIgV5+Jt+dxLwuxslBEfB9TSzzG6ljUIPuP5nvQrDyaiuarA3jKgDZJkwdzqK82+I+3nXwG0TCoxVra3f5nDtQ1l4L2mp5QQOnEpVP0GhcsucWaA28kWxaW8tPj+cFsicXiBMnbKSTAw4sVfE2N+WQaOSZCVn0IRx2f3VWJ32bQlVU+U=
-        - secure: esraXSpaA317MMVvR3SK+Lg7abHKobdYPr1zc8BH18jxzdeQEmgUu+pWEFvywRItcfIlK9n4VWYR79HRPGmXl1mPGGbXp9yYzSmRM0h1Aq7L6jNuTVad+IZ8AlU8UZxbN+0exGgsb4HdinzYxOEq/n3O510EJYoX4Vdy6+kJWpm8On/wGI+dgVIHREDzWr54F8f86LQJPaB4mjS9r4B7RFbucVuZ8MtBECMu/5d0t9O4wHl1j+oE3Qapyhb5HdD8tNbYFkljX7YM7UysC1yjxjzfej9LtqQyWiSmb41Wp+rXFeXDh/f4WgZOFfavlc0ecXmtAS60SX5TvoE181xzndUzVAEVU7bgeaF+CBKgw9Sv42qj7Us8XLQtEDkNA+bzuog6grNnBNhXP06BKJHHJ4E44cf8E+KiD/pOBUI9nxQ4T9sZZynPWcKL7TcTv6lGA41gd9u29R/735RCoreG2FdeubfwGEw8SjvE8i6R6wJhrQUKafTXlqlEvecDbEBpzFPRPtve40QePsqEcoR24BR/SKzVZKjzz4dby7AZjktJUiUYOqhLSqGaS9yPDA0BpK9/RSkbDa+pSwuOra94mD1N7XgrpVVE66CdOvRKcCelgWYEEdPW4cmTcKbRM2eTdQsQ4JVl2RVCjGszVjU51n22qggQwqAAdl1NOOMcgQ8=
+python: [3.6, 3.7, 3.8]
+jobs:
+    include:
+        - stage: deploy
+          python: 3.8
+          env:
+              - secure: "e1OhL0DCpggKLsS0M2GPWy9bgFkQaxI014bTXrGLJYfmSjPJD+4GaLmd0l1cXVWq7uQNIyuyMME60Wwe9+PKd0cCmv6e40nkuKIZU+7g1MK6aPHRsO5exQMxpYMy07fpD0QrgL/rh8V3YX2rxABzE5LzLxOsEjSZbvbw30SlONlPuVHr7G1dbniZihYptThBSOW0qNIkbonzImkP4Bhdes7/w0BebNzWVvc+fMQOZmTA6pvXLdbrOVnj/Ln81dvtpYVGeVjlTiCnkB/G9jeP7nlVfFD2l407EuK1cOCArR+0mhF1XiSy5ajzoylDv+bkRZcPapFoHWst3QQG/6AD0dpiGx/84/30lLkxx0+p2wdKr0FI7RqKzqn8Vt9h6yb234Nr1c1LLBXiIoIk3JaaZgSCZj2MtXOnxVIhnW7xtX/Gto+mWUQfK0zN2sl9R6X5V9Ibk98W5UmsdLp+2QYvAoLmPyZruruTIwRv+vvuBrBWnLoV6BWX8cc9BEaxIgV5+Jt+dxLwuxslBEfB9TSzzG6ljUIPuP5nvQrDyaiuarA3jKgDZJkwdzqK82+I+3nXwG0TCoxVra3f5nDtQ1l4L2mp5QQOnEpVP0GhcsucWaA28kWxaW8tPj+cFsicXiBMnbKSTAw4sVfE2N+WQaOSZCVn0IRx2f3VWJ32bQlVU+U="
+              - secure: "esraXSpaA317MMVvR3SK+Lg7abHKobdYPr1zc8BH18jxzdeQEmgUu+pWEFvywRItcfIlK9n4VWYR79HRPGmXl1mPGGbXp9yYzSmRM0h1Aq7L6jNuTVad+IZ8AlU8UZxbN+0exGgsb4HdinzYxOEq/n3O510EJYoX4Vdy6+kJWpm8On/wGI+dgVIHREDzWr54F8f86LQJPaB4mjS9r4B7RFbucVuZ8MtBECMu/5d0t9O4wHl1j+oE3Qapyhb5HdD8tNbYFkljX7YM7UysC1yjxjzfej9LtqQyWiSmb41Wp+rXFeXDh/f4WgZOFfavlc0ecXmtAS60SX5TvoE181xzndUzVAEVU7bgeaF+CBKgw9Sv42qj7Us8XLQtEDkNA+bzuog6grNnBNhXP06BKJHHJ4E44cf8E+KiD/pOBUI9nxQ4T9sZZynPWcKL7TcTv6lGA41gd9u29R/735RCoreG2FdeubfwGEw8SjvE8i6R6wJhrQUKafTXlqlEvecDbEBpzFPRPtve40QePsqEcoR24BR/SKzVZKjzz4dby7AZjktJUiUYOqhLSqGaS9yPDA0BpK9/RSkbDa+pSwuOra94mD1N7XgrpVVE66CdOvRKcCelgWYEEdPW4cmTcKbRM2eTdQsQ4JVl2RVCjGszVjU51n22qggQwqAAdl1NOOMcgQ8="
+              - secure: "o5dKSGEgHeMjR4iBdhJlBlmIktezaWls/mIJnED0NbWkqLILJN3z9LLxkRQEiA+T5tBeqJVHHNBIJ/+pIZPoHq1kBEMmZxBX7095/pSePlGDQ4paGkfIcuuOkMgWWGVcuXRlFljmLPBRHCcQrir3T/EVfZTcZNZcRo2u/0/ZGvb0zPiGcUIX7F3huQRiYiSFIEPOm4sft6PTLda89zLAhuNzvOwHX6A3tV6lFdtGWRA5GgbmVGC6i6ijKKzd8+HlKIkuNB1JsWvBBd4AzRWmhqNVqWg/okY9AB1LqyuG/a2HDa++n0FUzBc21bUG85vHdUuBmLxlpDWA7D7d1XCMZyHdN+oQUpvZ31CRmJkNUEDq4O2alsP+YORQ7RQaF5HGWZXRbIW1PqqJ+IN7BTmCQ53imrFXsHeEN99OG2jqTqRYLKx2UgBgkrEvHQzB/JtKCkwxg4/i/ROKi+6WwkX79kqKDkmyuaiCKxIIH2FfFpGfnPctlz/hKAh1wNd1XySmolgjSuQ4ZKqsSEqpAQO4kj6lA9G8vEHc+eWINyhM0z+gdlviiecmsPLMkXHC9MBqPZRyuQYJ3nrX3nv0keg0CPZJk3rVk1dA1j6qn+yLM2dMjKpwQd/Xo2JbBA4bah0/Sb+ps8jPmy2kDWqfI1mSJhPMpwIN4hKsuomsGIVR6SU="
+          install: pip install codecov
+          script:
+              - codecov -t "$CODECOV_TOKEN" -f "$HOME/.cache/codecov/coverage.xml"
+          before_deploy:
+              - touch "$HOME/.config/pypoetry/auth.toml"
+              - poetry config http-basic.pypi "$PYPI_USER" "$PYPI_PASS"
+          deploy:
+              provider: script
+              script: poetry publish --build
+              on: {tags: true}
+before_cache:
+    - mkdir -p "$HOME/.cache/codecov"
 cache:
-    pip: true
     directories:
         - "$HOME/.cache/pypoetry"
+        - "$HOME/.cache/codecov"
 before_install:
-    - pip install --pre poetry==1.0.0a4
     - mkdir -p "$HOME/.config/pypoetry"
-    - touch "$HOME/.config/pypoetry/auth.toml"
-install:
-    - poetry install
+    - curl -LSs "https://git.io/get-poetry" | python - -y --version 1.0.0b3
+    - source "$HOME/.poetry/env"
+install: poetry install
 script:
-    - poetry run flake8 --docstring-convention=numpy yaenv
-    - poetry run pytest --testdox tests
-before_deploy:
-    - poetry config http-basic.pypi $PYPI_USER $PYPI_PASS
-    - poetry build
-deploy:
-    provider: script
-    script: poetry publish
-    skip_cleanup: true
-    on:
-        python: 3.7
-        tags: true
+    - poetry run -- flake8 --docstring-convention=numpy yaenv
+    - poetry run -- pytest --pspec --cov-report=term --cov-report=xml:"$HOME/.cache/codecov/coverage.xml" --cov=yaenv tests

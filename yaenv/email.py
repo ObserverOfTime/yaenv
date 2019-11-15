@@ -9,17 +9,17 @@ EmailConfig = NewType('EmailConfig', Dict[str, Any])
 EmailConfig.__qualname__ = 'yaenv.email.EmailConfig'
 
 # Supported schemes.
-SCHEMES = {
-    'smtp': 'django.core.mail.backends.smtp.EmailBackend',
+SCHEMES: Dict[str, str] = {
     'console': 'django.core.mail.backends.console.EmailBackend',
+    'dummy': 'django.core.mail.backends.dummy.EmailBackend',
     'file': 'django.core.mail.backends.filebased.EmailBackend',
     'memory': 'django.core.mail.backends.locmem.EmailBackend',
-    'dummy': 'django.core.mail.backends.dummy.EmailBackend',
-}  # type: Dict[str, str]
+    'smtp': 'django.core.mail.backends.smtp.EmailBackend',
+}
 
 # Scheme aliases.
-SCHEMES['smtp+tls'] = SCHEMES['smtp']
 SCHEMES['smtp+ssl'] = SCHEMES['smtp']
+SCHEMES['smtp+tls'] = SCHEMES['smtp']
 
 # Register e-mail schemes in URLs.
 urlparse.uses_netloc += list(SCHEMES)

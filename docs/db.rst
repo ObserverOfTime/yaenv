@@ -23,6 +23,7 @@ Schemes
 * postgres: ``django.db.backends.postgresql``
 * postgresql: ``django.db.backends.postgresql``
 * sqlite: ``django.db.backends.sqlite3``
+* sqlite3: ``django.db.backends.sqlite3``
 
 .. note::
 
@@ -54,11 +55,11 @@ Other parameters will be passed to OPTIONS_ as is.
 .. _OPTIONS:
    https://docs.djangoproject.com/en/stable/ref/settings/#std:setting-OPTIONS
 
-.. _PostgreSQL isolation level:
-   https://docs.djangoproject.com/en/stable/ref/databases/#isolation-level
-
 .. _PostgreSQL search path:
    https://www.postgresql.org/docs/current/ddl-schemas.html#DDL-SCHEMAS-PATH
+
+.. _PostgreSQL isolation level:
+   https://docs.djangoproject.com/en/stable/ref/databases/#isolation-level
 
 .. admonition:: See also
 
