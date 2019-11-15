@@ -4,6 +4,7 @@ python:
     - 3.5
     - 3.6
     - 3.7
+    - 3.8
 env:
     global:
         - secure: e1OhL0DCpggKLsS0M2GPWy9bgFkQaxI014bTXrGLJYfmSjPJD+4GaLmd0l1cXVWq7uQNIyuyMME60Wwe9+PKd0cCmv6e40nkuKIZU+7g1MK6aPHRsO5exQMxpYMy07fpD0QrgL/rh8V3YX2rxABzE5LzLxOsEjSZbvbw30SlONlPuVHr7G1dbniZihYptThBSOW0qNIkbonzImkP4Bhdes7/w0BebNzWVvc+fMQOZmTA6pvXLdbrOVnj/Ln81dvtpYVGeVjlTiCnkB/G9jeP7nlVfFD2l407EuK1cOCArR+0mhF1XiSy5ajzoylDv+bkRZcPapFoHWst3QQG/6AD0dpiGx/84/30lLkxx0+p2wdKr0FI7RqKzqn8Vt9h6yb234Nr1c1LLBXiIoIk3JaaZgSCZj2MtXOnxVIhnW7xtX/Gto+mWUQfK0zN2sl9R6X5V9Ibk98W5UmsdLp+2QYvAoLmPyZruruTIwRv+vvuBrBWnLoV6BWX8cc9BEaxIgV5+Jt+dxLwuxslBEfB9TSzzG6ljUIPuP5nvQrDyaiuarA3jKgDZJkwdzqK82+I+3nXwG0TCoxVra3f5nDtQ1l4L2mp5QQOnEpVP0GhcsucWaA28kWxaW8tPj+cFsicXiBMnbKSTAw4sVfE2N+WQaOSZCVn0IRx2f3VWJ32bQlVU+U=
@@ -13,14 +14,14 @@ cache:
     directories:
         - "$HOME/.cache/pypoetry"
 before_install:
-    - pip install --pre poetry==1.0.0a4
+    - pip install --pre poetry==1.0.0b3
     - mkdir -p "$HOME/.config/pypoetry"
     - touch "$HOME/.config/pypoetry/auth.toml"
 install:
     - poetry install
 script:
-    - poetry run flake8 --docstring-convention=numpy yaenv
-    - poetry run pytest --testdox tests
+    - poetry run -- flake8 --docstring-convention=numpy yaenv
+    - poetry run -- pytest --testdox tests
 before_deploy:
     - poetry config http-basic.pypi $PYPI_USER $PYPI_PASS
     - poetry build
@@ -29,5 +30,5 @@ deploy:
     script: poetry publish
     skip_cleanup: true
     on:
-        python: 3.7
+        python: 3.8
         tags: true

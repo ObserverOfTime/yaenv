@@ -86,5 +86,5 @@ exclude = """
 docstring_convention = "numpy"
 
 [build-system]
-requires = ["poetry==1.0.0a4"]
+requires = ["poetry==1.0.0b3"]
 build-backend = "poetry.masonry.api"

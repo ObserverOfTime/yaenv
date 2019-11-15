@@ -3,15 +3,15 @@ yaenv
 
 |pypi| |rtd| |travis|
 
-.. |pypi| image:: https://img.shields.io/pypi/v/yaenv.svg?logo=python
-   :target: https://pypi.org/project/yaenv/
+.. |pypi| image:: https://img.shields.io/pypi/v/yaenv/1.1.0.svg?logo=python
+   :target: https://pypi.org/project/yaenv/1.1.0/
    :alt: PyPI
 
-.. |rtd| image:: https://img.shields.io/readthedocs/yaenv.svg?logo=read-the-docs
-   :target: https://yaenv.readthedocs.io/en/latest/
+.. |rtd| image:: https://img.shields.io/readthedocs/yaenv/v1.1.0.svg?logo=read-the-docs
+   :target: https://yaenv.readthedocs.io/en/v1.1.0/
    :alt: Read the Docs
 
-.. |travis| image:: https://img.shields.io/travis/ObserverOfTime/yaenv.svg?logo=travis
+.. |travis| image:: https://img.shields.io/travis/ObserverOfTime/yaenv/py3.5.svg?logo=travis
    :target: https://travis-ci.org/ObserverOfTime/yaenv
    :alt: Travis CI
 
