@@ -1,5 +1,6 @@
 """Useful utilities."""
 
+from importlib import import_module
 from sys import version_info
 from typing import Any
 
@@ -7,7 +8,7 @@ _truthy = ('1', 'on', 'y', 'yes', 'true')
 
 _falsy = ('', '0', 'off', 'n', 'no', 'false')
 
-cached_property = __import__(
+cached_property = import_module(
     'functools' if version_info >= (3, 8) else 'cached_property'
 ).cached_property
 

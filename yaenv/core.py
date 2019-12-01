@@ -10,9 +10,8 @@ from typing import Dict, Iterator, List, Optional, Tuple, Union
 
 from . import db, email, utils
 
-
-class EnvError(Exception):
-    """Exception class representing a dotenv error."""
+EnvError = type('EnvError', (Exception,), {})
+EnvError.__doc__ = 'Exception class representing a dotenv error.'
 
 
 class EnvVar:

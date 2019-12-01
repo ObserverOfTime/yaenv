@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "yaenv"
-version = "1.2.0"
+version = "1.2.1"
 readme = "README.rst"
 license = "BSD-3-Clause"
 description = "Yet another dotenv parser for Python."
@@ -25,9 +25,10 @@ classifiers = [
     "Natural Language :: English",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.5",
     "Programming Language :: Python :: 3.6",
     "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3 :: Only",
 ]
 
 [[tool.poetry.packages]]
@@ -37,37 +38,27 @@ include = "yaenv"
 python = "^3.6"
 
 [tool.poetry.dependencies.cached-property]
-version = "1.5.1"
+version = "^1.5.1"
 python = "<3.8"
 
 [tool.poetry.dev-dependencies]
-pytest = "5.1.2"
-pytest-cov = "2.8.1"
-sphinx = "2.2.0"
-sphinx-rtd-theme = "0.4.3"
-flake8 = "3.7.8"
-flake8-docstrings = "1.4.0"
-flake8-mypy = "17.8.0"
+pytest = "^5.3.1"
+pytest-cov = "^2.8.1"
+# pytest-pspec = "^0.0.4"
+sphinx = "^2.2.1"
+sphinx-rtd-theme = "^0.4.3"
+flake8 = "^3.7.9"
+flake8-docstrings = "^1.5.0"
+flake8-mypy = "^17.8.0"
 
 [tool.poetry.dev-dependencies.pytest-pspec]
 git = "https://github.com/ROpdebee/pytest-pspec"
 branch = "aad7ff1"
 
 [tool.poetry.extras]
-test = [
-    "pytest",
-    "pytest-cov",
-    "pytest-pspec",
-]
-docs = [
-    "sphinx",
-    "sphinx-rtd-theme",
-]
-lint = [
-    "flake8",
-    "flake8-docstrings",
-    "flake8-mypy",
-]
+test = ["pytest", "pytest-cov", "pytest-pspec"]
+docs = ["sphinx", "sphinx-rtd-theme"]
+lint = ["flake8", "flake8-docstrings", "flake8-mypy"]
 
 [tool.poetry.urls]
 "Bug tracker" = "https://github.com/ObserverOfTime/yaenv/issues"
@@ -77,16 +68,16 @@ addopts = "--pspec --cov-report=term --cov=yaenv"
 testpaths = "tests"
 
 [tool.flake8]
-exclude = """
-    .git,
-    .venv,venv,
-    build,dist,
-    __pycache__,
-    docs/conf.py,
-    tests/*,
-"""
+max_line_length = 80
 docstring_convention = "numpy"
 
+[tool.isort]
+balanced_wrapping = true
+combine_as_imports = true
+default_section = "THIRDPARTY"
+length_sort = false
+multi_line_output = 6
+
 [build-system]
-requires = ["poetry==1.0.0b3"]
+requires = ["poetry==1.0.0b8"]
 build-backend = "poetry.masonry.api"

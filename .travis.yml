@@ -28,9 +28,9 @@ cache:
         - "$HOME/.cache/codecov"
 before_install:
     - mkdir -p "$HOME/.config/pypoetry"
-    - curl -LSs "https://git.io/get-poetry" | python - -y --version 1.0.0b3
+    - curl -LSs "https://git.io/get-poetry" | python - -y --version 1.0.0b8
     - source "$HOME/.poetry/env"
 install: poetry install
 script:
-    - poetry run -- flake8 --docstring-convention=numpy yaenv
-    - poetry run -- pytest --pspec --cov-report=term --cov-report=xml:"$HOME/.cache/codecov/coverage.xml" --cov=yaenv tests
+    - poetry run flake8 --docstring-convention=numpy yaenv
+    - poetry run pytest --pspec --cov-report=term --cov-report=xml:"$HOME/.cache/codecov/coverage.xml" --cov=yaenv tests
