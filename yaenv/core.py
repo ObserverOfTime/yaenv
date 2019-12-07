@@ -1,5 +1,7 @@
 """Environment variable parser."""
 
+from __future__ import annotations
+
 from os import PathLike, environ, fspath, path
 from secrets import token_urlsafe
 from shlex import shlex
@@ -26,7 +28,7 @@ class EnvVar:
         The value of the variable.
     """
 
-    def __new__(cls, line: str) -> Optional['EnvVar']:
+    def __new__(cls, line: str) -> Optional[EnvVar]:
         """
         Parse a line and return a new instance or ``None``.
 

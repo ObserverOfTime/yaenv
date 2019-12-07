@@ -2,13 +2,13 @@
 
 ## Supported Versions
 
-|  Version  | Python |        Supported         |
-| :-------: | :----: | :----------------------: |
-|   1.2.x   |  3.6+  |    :heavy_check_mark:    |
-|   1.1.x   |  3.5+  |    :heavy_check_mark:    |
-|   1.0.0   |  3.5+  | :heavy_multiplication_x: |
-|   0.3.x   |  2.7+  |    :heavy_check_mark:    |
-| &lt;0.3.0 |  2.7+  | :heavy_multiplication_x: |
+| Version | Python |        Supported         |
+| :-----: | :----: | :----------------------: |
+|   1.3   |  3.7+  |    :heavy_check_mark:    |
+|   1.2   |  3.6+  |    :heavy_check_mark:    |
+|   1.1   |  3.5+  |    :heavy_check_mark:    |
+|   1.0   |  3.5+  | :heavy_multiplication_x: |
+| &lt;1.0 |  2.7+  | :heavy_multiplication_x: |
 
 ## Reporting a Vulnerability
 

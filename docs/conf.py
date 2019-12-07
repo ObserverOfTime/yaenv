@@ -24,7 +24,7 @@ copyright = '2019, ObserverOfTime, BSD 3-Clause License'
 author = 'ObserverOfTime'
 
 # The full version, including alpha/beta/rc tags
-release = '1.2.1'
+release = '1.3.0'
 
 # -- General configuration ---------------------------------------------------
 
@@ -71,8 +71,8 @@ master_doc = 'index'
 needs_sphinx = '2.2'
 
 extlinks = {
-    'dj': ('https://docs.djangoproject.com/en/2.2/ref/settings/#%s', ''),
-    'os': ('https://docs.python.org/3/library/os.html#os.%s', 'os.')
+    'dj': ('https://docs.djangoproject.com/en/3.0/ref/settings/#%s', ''),
+    'os': ('https://docs.python.org/3.8/library/os.html#os.%s', 'os.')
 }
 
 # -- Options for HTML output -------------------------------------------------
