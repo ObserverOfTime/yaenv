@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from functools import cached_property
 from os import PathLike, environ, fspath, path
 from secrets import token_urlsafe
 from shlex import shlex
@@ -317,7 +318,7 @@ class Env(PathLike):
         """
         return f"Env('{self.envfile}')"
 
-    @utils.cached_property
+    @cached_property
     def vars(self) -> Dict[str, str]:
         """`Dict[str, str]` : Get the environment variables as a ``dict``."""
         def _sub_callback(match):
