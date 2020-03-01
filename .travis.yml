@@ -3,32 +3,38 @@ dist: bionic
 language: python
 python: [3.8]
 jobs:
-    include:
-        - stage: deploy
-          python: 3.8
-          env:
-              - secure: "H7YeTb4m5ptE8LmyHYiA9Hsidzn7WWqt1JppLn9MOXDPBlIdy2bi4fzDShTHLJv9H70iPANY/IOFgmeqP91KsjwiOMC4C+3ODOdDKTeeBpEdCOv5BM3bmGXF8Bm6QLxGEPdHVBtfOY6tfj+R/Mu0Sw9DHu7/QvhbX0yOJW18qmH3VDnnHvkq1WCnl0qc+2zywDg9AbuGpFmm3eudJcdDpRF8Zw0i9zFFgohQxmOTMWRkFFGsdBsxB84mymwqYeL8guXwBQa+YiROQtl+fu64AESV1hsWx2Uwoc44GuG/IlmgEsodx0fJmMhuFjIYQcSxTApfcG4bReHpiGgJt72Y6kRABSMrnpUgpOUe2IITcRPpxfW8Fn/1648l6kDLxR8hhaHVu86XuWSrHhnr7p3wOYKANN7eb/UQ7wZEA7A21KPExJh915IDlTUbu5pSNba1nZ56RTPFJEwV8aMJcVNwG8CYmsRtSNa3nyFoT0wJ9THiSKSo0xx7Vxy/d36L1sCf3KiUlw20e37hnWBNh2804euuW/mJ39BRf+48ySs8887sYBPD6uEg/AVEOUslh1Jf1WPH1DXJ8I1rq5+sy0/mCcVulwQiJ1PExdwJEGLPtaKjiFCrJ0nyyj7f4+r8TI4oF0jQV3hKQtm6QEt62Hqz1wQWYRAK6ASA6BigeTArTG4="
-              - secure: "o5dKSGEgHeMjR4iBdhJlBlmIktezaWls/mIJnED0NbWkqLILJN3z9LLxkRQEiA+T5tBeqJVHHNBIJ/+pIZPoHq1kBEMmZxBX7095/pSePlGDQ4paGkfIcuuOkMgWWGVcuXRlFljmLPBRHCcQrir3T/EVfZTcZNZcRo2u/0/ZGvb0zPiGcUIX7F3huQRiYiSFIEPOm4sft6PTLda89zLAhuNzvOwHX6A3tV6lFdtGWRA5GgbmVGC6i6ijKKzd8+HlKIkuNB1JsWvBBd4AzRWmhqNVqWg/okY9AB1LqyuG/a2HDa++n0FUzBc21bUG85vHdUuBmLxlpDWA7D7d1XCMZyHdN+oQUpvZ31CRmJkNUEDq4O2alsP+YORQ7RQaF5HGWZXRbIW1PqqJ+IN7BTmCQ53imrFXsHeEN99OG2jqTqRYLKx2UgBgkrEvHQzB/JtKCkwxg4/i/ROKi+6WwkX79kqKDkmyuaiCKxIIH2FfFpGfnPctlz/hKAh1wNd1XySmolgjSuQ4ZKqsSEqpAQO4kj6lA9G8vEHc+eWINyhM0z+gdlviiecmsPLMkXHC9MBqPZRyuQYJ3nrX3nv0keg0CPZJk3rVk1dA1j6qn+yLM2dMjKpwQd/Xo2JbBA4bah0/Sb+ps8jPmy2kDWqfI1mSJhPMpwIN4hKsuomsGIVR6SU="
-          install: pip install codecov
-          script:
-              - codecov -t "$CODECOV_TOKEN" -f "$HOME/.cache/codecov/coverage.xml"
-          before_deploy:
-              - poetry config pypi-token.pypi "$POETRY_PYPI_TOKEN_PYPI"
-          deploy:
-              provider: script
-              script: poetry publish --build
-              on: {tags: true}
+  include:
+    - stage: test
+      before_install:
+        - mkdir -p "$HOME/.config/pypoetry"
+        - curl -LSs "https://git.io/get-poetry" | python - -y --version 1.0.5
+        - source "$HOME/.poetry/env"
+      install: poetry install
+      script:
+        - poetry run flake8 --docstring-convention=numpy yaenv
+        - |
+          poetry run pytest --pspec --cov=yaenv --cov-report=term \
+            --cov-report=xml:"$HOME/.cache/codecov/coverage.xml" tests
+    - stage: deploy
+      python: 3.8
+      env:
+        - secure: "H7YeTb4m5ptE8LmyHYiA9Hsidzn7WWqt1JppLn9MOXDPBlIdy2bi4fzDShTHLJv9H70iPANY/IOFgmeqP91KsjwiOMC4C+3ODOdDKTeeBpEdCOv5BM3bmGXF8Bm6QLxGEPdHVBtfOY6tfj+R/Mu0Sw9DHu7/QvhbX0yOJW18qmH3VDnnHvkq1WCnl0qc+2zywDg9AbuGpFmm3eudJcdDpRF8Zw0i9zFFgohQxmOTMWRkFFGsdBsxB84mymwqYeL8guXwBQa+YiROQtl+fu64AESV1hsWx2Uwoc44GuG/IlmgEsodx0fJmMhuFjIYQcSxTApfcG4bReHpiGgJt72Y6kRABSMrnpUgpOUe2IITcRPpxfW8Fn/1648l6kDLxR8hhaHVu86XuWSrHhnr7p3wOYKANN7eb/UQ7wZEA7A21KPExJh915IDlTUbu5pSNba1nZ56RTPFJEwV8aMJcVNwG8CYmsRtSNa3nyFoT0wJ9THiSKSo0xx7Vxy/d36L1sCf3KiUlw20e37hnWBNh2804euuW/mJ39BRf+48ySs8887sYBPD6uEg/AVEOUslh1Jf1WPH1DXJ8I1rq5+sy0/mCcVulwQiJ1PExdwJEGLPtaKjiFCrJ0nyyj7f4+r8TI4oF0jQV3hKQtm6QEt62Hqz1wQWYRAK6ASA6BigeTArTG4="
+        - secure: "o5dKSGEgHeMjR4iBdhJlBlmIktezaWls/mIJnED0NbWkqLILJN3z9LLxkRQEiA+T5tBeqJVHHNBIJ/+pIZPoHq1kBEMmZxBX7095/pSePlGDQ4paGkfIcuuOkMgWWGVcuXRlFljmLPBRHCcQrir3T/EVfZTcZNZcRo2u/0/ZGvb0zPiGcUIX7F3huQRiYiSFIEPOm4sft6PTLda89zLAhuNzvOwHX6A3tV6lFdtGWRA5GgbmVGC6i6ijKKzd8+HlKIkuNB1JsWvBBd4AzRWmhqNVqWg/okY9AB1LqyuG/a2HDa++n0FUzBc21bUG85vHdUuBmLxlpDWA7D7d1XCMZyHdN+oQUpvZ31CRmJkNUEDq4O2alsP+YORQ7RQaF5HGWZXRbIW1PqqJ+IN7BTmCQ53imrFXsHeEN99OG2jqTqRYLKx2UgBgkrEvHQzB/JtKCkwxg4/i/ROKi+6WwkX79kqKDkmyuaiCKxIIH2FfFpGfnPctlz/hKAh1wNd1XySmolgjSuQ4ZKqsSEqpAQO4kj6lA9G8vEHc+eWINyhM0z+gdlviiecmsPLMkXHC9MBqPZRyuQYJ3nrX3nv0keg0CPZJk3rVk1dA1j6qn+yLM2dMjKpwQd/Xo2JbBA4bah0/Sb+ps8jPmy2kDWqfI1mSJhPMpwIN4hKsuomsGIVR6SU="
+      install: pip install codecov
+      script:
+        - codecov -t "$CODECOV_TOKEN" -f "$HOME/.cache/codecov/coverage.xml"
+      before_deploy:
+        - mkdir -p "$HOME/.config/pypoetry"
+        - curl -LSs "https://git.io/get-poetry" | python - -y --version 1.0.5
+        - source "$HOME/.poetry/env"
+        - poetry config pypi-token.pypi "$POETRY_PYPI_TOKEN_PYPI"
+      deploy:
+        provider: script
+        script: poetry publish --build
+        on: {tags: true}
 before_cache:
-    - mkdir -p "$HOME/.cache/codecov"
+  - mkdir -p "$HOME/.cache/codecov"
 cache:
-    directories:
-        - "$HOME/.cache/pypoetry"
-        - "$HOME/.cache/codecov"
-before_install:
-    - mkdir -p "$HOME/.config/pypoetry"
-    - curl -LSs "https://git.io/get-poetry" | python - -y --version 1.0.0
-    - source "$HOME/.poetry/env"
-install: poetry install
-script:
-    - poetry run flake8 --docstring-convention=numpy yaenv
-    - poetry run pytest --pspec --cov-report=term --cov-report=xml:"$HOME/.cache/codecov/coverage.xml" --cov=yaenv tests
+  directories:
+    - "$HOME/.cache/pypoetry"
+    - "$HOME/.cache/codecov"

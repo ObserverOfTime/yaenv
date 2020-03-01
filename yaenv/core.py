@@ -607,7 +607,7 @@ class Env(PathLike):
                     tf.write(newline)
                     replaced = True
             if not replaced:
-                if not line[-1] == '\n':  # TODO: coverage
+                if not line[-1] == '\n':
                     tf.write('\n')  # ensure new line
                 tf.write(newline)
 
