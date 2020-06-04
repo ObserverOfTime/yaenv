@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "yaenv"
-version = "1.4.0"
+version = "1.4.1"
 readme = "README.rst"
 license = "BSD-3-Clause"
 description = "Yet another dotenv parser for Python."
@@ -38,18 +38,14 @@ include = "yaenv"
 python = "^3.8"
 
 [tool.poetry.dev-dependencies]
-pytest = "^5.3.5"
-pytest-cov = "^2.8.1"
-# pytest-pspec = "^0.0.4"
-sphinx = "^2.4.3"
-sphinx-rtd-theme = "^0.4.3"
-flake8 = "^3.7.9"
+flake8 = "^3.8.2"
 flake8-docstrings = "^1.5.0"
-flake8-mypy = "^17.8.0"
-
-[tool.poetry.dev-dependencies.pytest-pspec]
-git = "https://github.com/ROpdebee/pytest-pspec"
-branch = "aad7ff1"
+mypy = "^0.780"
+pytest = "^5.4.3"
+pytest-cov = "^2.9.0"
+pytest-pspec = "^0.0.4"
+sphinx = "^3.0.4"
+sphinx-rtd-theme = "^0.4.3"
 
 [tool.poetry.urls]
 "Bug tracker" = "https://github.com/ObserverOfTime/yaenv/issues"

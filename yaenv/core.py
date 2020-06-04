@@ -4,9 +4,9 @@ from __future__ import annotations
 
 from functools import cached_property
 from os import PathLike, environ, fspath, path
+from re import compile as regex
 from secrets import token_urlsafe
 from shlex import shlex
-from re import compile as regex
 from shutil import move
 from tempfile import mkstemp
 from typing import Dict, Iterator, List, Optional, Tuple, Union
@@ -29,7 +29,11 @@ class EnvVar:
         The value of the variable.
     """
 
-    def __new__(cls, line: str) -> Optional[EnvVar]:
+    _interpolate: bool
+    key: str
+    value: str
+
+    def __new__(cls, line: str) -> Optional[EnvVar]:  # type: ignore
         """
         Parse a line and return a new instance or ``None``.
 
@@ -321,12 +325,12 @@ class Env(PathLike):
     @cached_property
     def vars(self) -> Dict[str, str]:
         """`Dict[str, str]` : Get the environment variables as a ``dict``."""
-        def _sub_callback(match):
+        def _sub_callback(match):  # type: ignore
             return {**self.ENV, **result}.get(match.group(1), '')
 
         with open(self.envfile, 'r') as f:
             envvars = list(filter(None.__ne__, map(EnvVar, f.readlines())))
-            result = dict(envvars)
+            result = dict(envvars)  # type: ignore
 
         # substitute variables that can be interpolated
         posix = regex(r'\$\{([^}].*)?\}')
@@ -388,11 +392,9 @@ class Env(PathLike):
         >>> env.bool('BOOL_VAR', False)
         False
         """
-        value = self.get(key, default)
+        value = self.get(key)
         if value is None:
-            return None
-        if isinstance(value, bool):
-            return value
+            return default
         if utils.is_truthy(value):
             return True
         if utils.is_falsy(value):
@@ -425,9 +427,9 @@ class Env(PathLike):
         >>> env.int('INT_VAR', 10)
         10
         """
-        value = self.get(key, default)
+        value = self.get(key)
         if value is None:
-            return None
+            return default
         try:
             return int(value)
         except ValueError:
@@ -460,9 +462,9 @@ class Env(PathLike):
         >>> env.float('FLOAT_VAR', 0.3)
         0.3
         """
-        value = self.get(key, default)
+        value = self.get(key)
         if value is None:
-            return None
+            return default
         try:
             return float(value)
         except ValueError:
@@ -492,11 +494,9 @@ class Env(PathLike):
         >>> env.list('LIST_VAR', separator=':')
         ['item1', 'item2']
         """
-        value = self.get(key, default)
+        value = self.get(key)
         if value is None:
-            return None
-        if isinstance(value, List):
-            return value
+            return default
         return value.split(separator)
 
     def db(self, key: str, default:
@@ -584,7 +584,7 @@ class Env(PathLike):
             The value of the key or a random string.
         """
         value = self.get(key)
-        if not value:
+        if value is None:
             value = token_urlsafe(37)
             self.vars[key] = value
         return value
