@@ -586,7 +586,7 @@ class Env(PathLike):
         value = self.get(key)
         if value is None:
             value = token_urlsafe(37)
-            self.vars[key] = value
+            self[key] = value
         return value
 
     def _replace(self, key: str, value: Optional[str]) -> None:

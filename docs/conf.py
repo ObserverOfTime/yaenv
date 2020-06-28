@@ -21,11 +21,11 @@ sys.path.insert(0, os.path.abspath('..'))
 # -- Project information -----------------------------------------------------
 
 project = 'yaenv'
-copyright = '2019, ObserverOfTime, BSD 3-Clause License'
+copyright = '2019-2020, ObserverOfTime, BSD 3-Clause License'
 author = 'ObserverOfTime'
 
 # The full version, including alpha/beta/rc tags
-release = '1.4.0'
+release = '1.4.1'
 
 # -- General configuration ---------------------------------------------------
 
@@ -68,7 +68,7 @@ source_suffix = '.rst'
 
 master_doc = 'index'
 
-needs_sphinx = '2.2'
+needs_sphinx = '3.0'
 
 extlinks = {
     'dj': ('https://docs.djangoproject.com/en/3.0/ref/settings/#%s', ''),
@@ -89,4 +89,4 @@ html_theme_options = {
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+html_static_path = []
