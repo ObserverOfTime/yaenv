@@ -1,15 +1,15 @@
 """Database URL parser."""
 
-from typing import Any, Dict, NewType
+from typing import Any, NewType
 from urllib import parse as urlparse
 
 from .utils import is_truthy
 
-DBConfig = NewType('DBConfig', Dict[str, Any])
+DBConfig = NewType('DBConfig', dict[str, Any])
 DBConfig.__qualname__ = 'yaenv.db.DBConfig'
 
 # Supported schemes.
-SCHEMES: Dict[str, str] = {
+SCHEMES: dict[str, str] = {
     'mysql': 'django.db.backends.mysql',
     'oracle': 'django.db.backends.oracle',
     'pgsql': 'django.db.backends.postgresql',
@@ -93,7 +93,7 @@ def parse(url: str) -> DBConfig:
     })
 
     # Pass the query string into OPTIONS.
-    options: Dict[str, Any] = {}
+    options: dict[str, Any] = {}
     qs = urlparse.parse_qs(uri.query)
     for key, values in qs.items():
         if key == 'isolation':
