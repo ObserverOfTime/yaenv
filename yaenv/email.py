@@ -1,15 +1,15 @@
 """E-mail URL parser."""
 
-from typing import Any, Dict, NewType
+from typing import Any, NewType
 from urllib import parse as urlparse
 
 from .utils import is_truthy
 
-EmailConfig = NewType('EmailConfig', Dict[str, Any])
+EmailConfig = NewType('EmailConfig', dict[str, Any])
 EmailConfig.__qualname__ = 'yaenv.email.EmailConfig'
 
 # Supported schemes.
-SCHEMES: Dict[str, str] = {
+SCHEMES: dict[str, str] = {
     'console': 'django.core.mail.backends.console.EmailBackend',
     'dummy': 'django.core.mail.backends.dummy.EmailBackend',
     'file': 'django.core.mail.backends.filebased.EmailBackend',

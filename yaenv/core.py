@@ -9,12 +9,13 @@ from secrets import token_urlsafe
 from shlex import shlex
 from shutil import move
 from tempfile import mkstemp
-from typing import Dict, Iterator, List, Optional, Tuple, Union
+from typing import Iterator, Optional, Union
 
 from . import db, email, utils
 
-EnvError = type('EnvError', (Exception,), {})
-EnvError.__doc__ = 'Exception class representing a dotenv error.'
+
+class EnvError(Exception):
+    """Exception class representing a dotenv error."""
 
 
 class EnvVar:
@@ -45,8 +46,8 @@ class EnvVar:
         Returns
         -------
         Optional[EnvVar]
-            Returns a new ``EnvVar`` if all went well, or ``None``
-            if the line doesn't contain a variable declaration.
+            A new ``EnvVar`` if all went well, or ``None`` if
+            the line doesn't contain a variable declaration.
 
         Raises
         ------
@@ -135,6 +136,22 @@ class EnvVar:
         """
         yield self.key
         yield self.value
+
+    def __len__(self) -> int:
+        """
+        Return a number which represents the state of the ``EnvVar``.
+
+        Returns
+        -------
+        int
+            ``0`` if the ``EnvVar`` is ``None``, ``1``
+            if the value is blank, or ``2`` otherwise.
+        """
+        if self is None:
+            return 0
+        if not self.value:
+            return 1
+        return 2
 
     def __str__(self) -> str:  # pragma: no cover
         """
@@ -249,13 +266,13 @@ class Env(PathLike):
         else:
             self._replace(key, None)
 
-    def __iter__(self) -> Iterator[Tuple[str, str]]:
+    def __iter__(self) -> Iterator[tuple[str, str]]:
         """
         Iterate through the entries in the dotenv file.
 
         Returns
         -------
-        Iterator[Tuple[str, str]]
+        Iterator[tuple[str, str]]
             An iterator of key-value pairs.
         """
         yield from self.vars.items()
@@ -323,13 +340,13 @@ class Env(PathLike):
         return f"Env('{self.envfile}')"
 
     @cached_property
-    def vars(self) -> Dict[str, str]:
-        """`Dict[str, str]` : Get the environment variables as a ``dict``."""
+    def vars(self) -> dict[str, str]:
+        """`dict[str, str]` : Get the environment variables as a ``dict``."""
         def _sub_callback(match):  # type: ignore
-            return {**self.ENV, **result}.get(match.group(1), '')
+            return (self.ENV | result).get(match.group(1), '')  # type: ignore
 
         with open(self.envfile, 'r') as f:
-            envvars = list(filter(None.__ne__, map(EnvVar, f.readlines())))
+            envvars = list(filter(EnvVar.__len__, map(EnvVar, f.readlines())))
             result = dict(envvars)  # type: ignore
 
         # substitute variables that can be interpolated
@@ -341,7 +358,7 @@ class Env(PathLike):
 
     def setenv(self) -> None:
         """Add the variables defined in the dotenv file to :os:`environ`."""
-        self.ENV.update(self.vars)
+        self.ENV |= self.vars  # type: ignore
 
     def get(self, key: str, default: Optional[str] = None) -> Optional[str]:
         """
@@ -470,8 +487,8 @@ class Env(PathLike):
         except ValueError:
             raise EnvError(f"Invalid numerical value: '{value}'")
 
-    def list(self, key: str, default: Optional[List] = None,
-             separator: str = ',') -> Optional[List]:
+    def list(self, key: str, default: Optional[list] = None,
+             separator: str = ',') -> Optional[list]:
         """
         Return an environment variable as a ``list``, or a default value.
 
@@ -479,14 +496,14 @@ class Env(PathLike):
         ----------
         key : str
             The name of the variable.
-        default : Optional[List]
+        default : Optional[list]
             The default value.
         separator : str
             The separator to use when splitting the list.
 
         Returns
         -------
-        Optional[List]
+        Optional[list]
             The ``list`` value of the variable or the ``default`` value.
 
         Examples

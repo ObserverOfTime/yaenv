@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "yaenv"
-version = "1.4.1"
+version = "1.5.0"
 readme = "README.rst"
 license = "BSD-3-Clause"
 description = "Yet another dotenv parser for Python."
@@ -26,7 +26,7 @@ classifiers = [
     "Operating System :: OS Independent",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3 :: Only",
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
@@ -35,28 +35,29 @@ classifiers = [
 include = "yaenv"
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.9"
 
 [tool.poetry.dev-dependencies]
-flake8 = "^3.8.2"
+flake8 = "^3.8.4"
 flake8-docstrings = "^1.5.0"
-mypy = "^0.780"
-pytest = "^5.4.3"
-pytest-cov = "^2.9.0"
+mypy = "^0.800"
+pytest = "^6.1.2"
+pytest-cov = "^2.10.1"
 pytest-pspec = "^0.0.4"
-sphinx = "^3.0.4"
-sphinx-rtd-theme = "^0.4.3"
+sphinx = "^3.5.1"
+sphinx-rtd-theme = "^0.5.0"
 
 [tool.poetry.urls]
 "Bug tracker" = "https://github.com/ObserverOfTime/yaenv/issues"
 
-[tool.pytest]
-addopts = "--pspec --cov-report=term --cov=yaenv"
-testpaths = "tests"
+[tool.coverage]
+run = {source = ["yaenv"]}
+report = {fail_under = 90}
 
-[tool.flake8]
-max_line_length = 80
-docstring_convention = "numpy"
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+required_plugins = ["pytest-cov", "pytest-pspec"]
+addopts = ["--pspec", "--cov", "--cov-report=term"]
 
 [tool.isort]
 balanced_wrapping = true
@@ -66,5 +67,5 @@ length_sort = false
 multi_line_output = 6
 
 [build-system]
-requires = ["poetry>=1.0"]
+requires = ["poetry>=1.1"]
 build-backend = "poetry.masonry.api"

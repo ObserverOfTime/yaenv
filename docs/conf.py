@@ -12,11 +12,13 @@ https://www.sphinx-doc.org/en/latest/usage/configuration.html
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 
+import linecache
 import os
+import re
 import sys
-import sphinx_rtd_theme
 
 sys.path.insert(0, os.path.abspath('..'))
+sys.path.append(os.path.dirname(__file__))
 
 # -- Project information -----------------------------------------------------
 
@@ -25,7 +27,7 @@ copyright = '2019-2020, ObserverOfTime, BSD 3-Clause License'
 author = 'ObserverOfTime'
 
 # The full version, including alpha/beta/rc tags
-release = '1.4.1'
+release = re.search('"(.+)"', linecache.getline('pyproject.toml', 3)).group(1)
 
 # -- General configuration ---------------------------------------------------
 
@@ -68,11 +70,11 @@ source_suffix = '.rst'
 
 master_doc = 'index'
 
-needs_sphinx = '3.0'
+needs_sphinx = '3.4'
 
 extlinks = {
-    'dj': ('https://docs.djangoproject.com/en/3.0/ref/settings/#%s', ''),
-    'os': ('https://docs.python.org/3.8/library/os.html#os.%s', 'os.')
+    'dj': ('https://docs.djangoproject.com/en/3.1/ref/settings/#%s', ''),
+    'os': ('https://docs.python.org/3.9/library/os.html#os.%s', 'os.')
 }
 
 # -- Options for HTML output -------------------------------------------------
@@ -80,7 +82,9 @@ extlinks = {
 # The theme to use for HTML and HTML Help pages.
 # See the documentation for a list of builtin themes.
 html_theme = 'sphinx_rtd_theme'
-html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
+html_theme_path = [
+    __import__(html_theme).get_html_theme_path()
+]
 html_theme_options = {
     'display_version': True,
     'collapse_navigation': True,

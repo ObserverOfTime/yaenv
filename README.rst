@@ -12,7 +12,7 @@ yaenv
    :alt: Read the Docs
 
 .. |travis| image:: https://img.shields.io/travis/ObserverOfTime/yaenv.svg?logo=travis
-   :target: https://travis-ci.org/ObserverOfTime/yaenv
+   :target: https://travis-ci.com/ObserverOfTime/yaenv
    :alt: Travis CI
 
 .. |codecov| image:: https://img.shields.io/codecov/c/gh/ObserverOfTime/yaenv?logo=codecov

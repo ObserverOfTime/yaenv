@@ -1,2 +1,2 @@
 # force RTD to use Sphinx 3
-sphinx>=3.0.4,<4.0
+sphinx>=3.4,<4.0
