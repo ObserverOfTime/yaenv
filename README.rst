@@ -1,7 +1,7 @@
 yaenv
 =====
 
-|pypi| |rtd| |travis| |codecov|
+|pypi| |rtd| |github| |codecov|
 
 .. |pypi| image:: https://img.shields.io/pypi/v/yaenv.svg?logo=python
    :target: https://pypi.org/project/yaenv/
@@ -11,9 +11,9 @@ yaenv
    :target: https://yaenv.readthedocs.io/en/latest/
    :alt: Read the Docs
 
-.. |travis| image:: https://img.shields.io/travis/ObserverOfTime/yaenv.svg?logo=travis
-   :target: https://travis-ci.com/ObserverOfTime/yaenv
-   :alt: Travis CI
+.. |github| image:: https://img.shields.io/github/workflow/status/ObserverOfTime/yaenv/tests?label=build&logo=github
+   :target: https://github.com/ObserverOfTime/yaenv/actions/workflows/tests.yml
+   :alt: GitHub Actions
 
 .. |codecov| image:: https://img.shields.io/codecov/c/gh/ObserverOfTime/yaenv?logo=codecov
    :target: https://codecov.io/gh/ObserverOfTime/yaenv
