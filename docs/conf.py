@@ -23,7 +23,7 @@ sys.path.append(os.path.dirname(__file__))
 # -- Project information -----------------------------------------------------
 
 project = 'yaenv'
-copyright = '2019-2020, ObserverOfTime, BSD 3-Clause License'
+copyright = '2019-2021, ObserverOfTime, BSD 3-Clause License'
 author = 'ObserverOfTime'
 
 # The full version, including alpha/beta/rc tags
@@ -70,11 +70,11 @@ source_suffix = '.rst'
 
 master_doc = 'index'
 
-needs_sphinx = '3.4'
+needs_sphinx = '4.1'
 
 extlinks = {
-    'dj': ('https://docs.djangoproject.com/en/3.1/ref/settings/#%s', ''),
-    'os': ('https://docs.python.org/3.9/library/os.html#os.%s', 'os.')
+    'dj': ('https://docs.djangoproject.com/en/3.2/ref/settings/#%s', ''),
+    'os': ('https://docs.python.org/3.10/library/os.html#os.%s', 'os.')
 }
 
 # -- Options for HTML output -------------------------------------------------

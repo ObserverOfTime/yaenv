@@ -12,7 +12,7 @@ yaenv
    :alt: Read the Docs
 
 .. |github| image:: https://img.shields.io/github/workflow/status/ObserverOfTime/yaenv/tests?label=build&logo=github
-   :target: https://github.com/ObserverOfTime/yaenv/actions/workflows/tests.yml
+   :target: https://github.com/ObserverOfTime/yaenv/actions/workflows/tests.yml?query=branch%3Amaster
    :alt: GitHub Actions
 
 .. |codecov| image:: https://img.shields.io/codecov/c/gh/ObserverOfTime/yaenv?logo=codecov

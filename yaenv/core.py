@@ -9,7 +9,7 @@ from secrets import token_urlsafe
 from shlex import shlex
 from shutil import move
 from tempfile import mkstemp
-from typing import Iterator, Optional, Union
+from typing import Iterator, Literal
 
 from . import db, email, utils
 
@@ -34,7 +34,7 @@ class EnvVar:
     key: str
     value: str
 
-    def __new__(cls, line: str) -> Optional[EnvVar]:  # type: ignore
+    def __new__(cls, line: str) -> EnvVar | None:  # type: ignore
         """
         Parse a line and return a new instance or ``None``.
 
@@ -45,7 +45,7 @@ class EnvVar:
 
         Returns
         -------
-        Optional[EnvVar]
+        EnvVar | None
             A new ``EnvVar`` if all went well, or ``None`` if
             the line doesn't contain a variable declaration.
 
@@ -137,13 +137,13 @@ class EnvVar:
         yield self.key
         yield self.value
 
-    def __len__(self) -> int:
+    def __len__(self) -> Literal[0, 1, 2]:
         """
         Return a number which represents the state of the ``EnvVar``.
 
         Returns
         -------
-        int
+        Literal[0, 1, 2]
             ``0`` if the ``EnvVar`` is ``None``, ``1``
             if the value is blank, or ``2`` otherwise.
         """
@@ -184,12 +184,12 @@ class Env(PathLike):
     ----------
     ENV : os._Environ
         A reference to :os:`environ`.
-    envfile : Union[str, :os:`PathLike`]
+    envfile : str | :os:`PathLike`
         The dotenv file of the object.
 
     Parameters
     ----------
-    envfile : Union[str, :os:`PathLike`]
+    envfile : str | :os:`PathLike`
         The path to a dotenv file.
 
     Examples
@@ -201,7 +201,7 @@ class Env(PathLike):
     >>> env = Env('.env')
     """
 
-    def __init__(self, envfile: Union[str, PathLike]) -> None:
+    def __init__(self, envfile: str | PathLike) -> None:
         if not path.isfile(envfile):
             raise EnvError(f"File '{envfile}' does not exist")
         self.envfile = envfile
@@ -343,7 +343,7 @@ class Env(PathLike):
     def vars(self) -> dict[str, str]:
         """`dict[str, str]` : Get the environment variables as a ``dict``."""
         def _sub_callback(match):  # type: ignore
-            return (self.ENV | result).get(match.group(1), '')  # type: ignore
+            return (self.ENV | result).get(match.group(1), '')
 
         with open(self.envfile, 'r') as f:
             envvars = list(filter(EnvVar.__len__, map(EnvVar, f.readlines())))
@@ -360,7 +360,7 @@ class Env(PathLike):
         """Add the variables defined in the dotenv file to :os:`environ`."""
         self.ENV |= self.vars  # type: ignore
 
-    def get(self, key: str, default: Optional[str] = None) -> Optional[str]:
+    def get(self, key: str, default: str | None = None) -> str | None:
         """
         Return an environment variable or a default value.
 
@@ -368,12 +368,12 @@ class Env(PathLike):
         ----------
         key : str
             The name of the variable.
-        default : Optional[str]
+        default : str | None
             The default value.
 
         Returns
         -------
-        Optional[str]
+        str | None
             The value of the variable or the ``default`` value.
 
         Examples
@@ -383,7 +383,7 @@ class Env(PathLike):
         """
         return self.ENV.get(key, self.vars.get(key) or default)
 
-    def bool(self, key: str, default: Optional[bool] = None) -> Optional[bool]:
+    def bool(self, key: str, default: bool | None = None) -> bool | None:
         """
         Return an environment variable as a ``bool``, or a default value.
 
@@ -391,12 +391,12 @@ class Env(PathLike):
         ----------
         key : str
             The name of the variable.
-        default : Optional[bool]
+        default : bool | None
             The default value.
 
         Returns
         -------
-        Optional[bool]
+        bool | None
             The ``bool`` value of the variable or the ``default`` value.
 
         Raises
@@ -418,7 +418,7 @@ class Env(PathLike):
             return False
         raise EnvError(f"Invalid boolean value: '{value}'")
 
-    def int(self, key: str, default: Optional[int] = None) -> Optional[int]:
+    def int(self, key: str, default: int | None = None) -> int | None:
         """
         Return an environment variable as an ``int``, or a default value.
 
@@ -426,12 +426,12 @@ class Env(PathLike):
         ----------
         key : str
             The name of the variable.
-        default : Optional[int]
+        default : int | None
             The default value.
 
         Returns
         -------
-        Optional[int]
+        int | None
             The ``int`` value of the variable or the ``default`` value.
 
         Raises
@@ -452,8 +452,7 @@ class Env(PathLike):
         except ValueError:
             raise EnvError(f"Invalid integer value: '{value}'")
 
-    def float(self, key: str, default:
-              Optional[float] = None) -> Optional[float]:
+    def float(self, key: str, default: float | None = None) -> float | None:
         """
         Return an environment variable as a ``float``, or a default value.
 
@@ -461,12 +460,12 @@ class Env(PathLike):
         ----------
         key : str
             The name of the variable.
-        default : Optional[float]
+        default : float | None
             The default value.
 
         Returns
         -------
-        Optional[float]
+        float | None
             The ``float`` value of the variable or the ``default`` value.
 
         Raises
@@ -487,8 +486,8 @@ class Env(PathLike):
         except ValueError:
             raise EnvError(f"Invalid numerical value: '{value}'")
 
-    def list(self, key: str, default: Optional[list] = None,
-             separator: str = ',') -> Optional[list]:
+    def list(self, key: str, default: list | None = None,
+             separator: str = ',') -> list | None:
         """
         Return an environment variable as a ``list``, or a default value.
 
@@ -496,14 +495,14 @@ class Env(PathLike):
         ----------
         key : str
             The name of the variable.
-        default : Optional[list]
+        default : list | None
             The default value.
         separator : str
             The separator to use when splitting the list.
 
         Returns
         -------
-        Optional[list]
+        list | None
             The ``list`` value of the variable or the ``default`` value.
 
         Examples
@@ -516,8 +515,7 @@ class Env(PathLike):
             return default
         return value.split(separator)
 
-    def db(self, key: str, default:
-           Optional[str] = None) -> Optional[db.DBConfig]:
+    def db(self, key: str, default: str | None = None) -> db.DBConfig | None:
         """
         Return a dictionary that can be used for Django's database settings.
 
@@ -525,12 +523,12 @@ class Env(PathLike):
         ----------
         key : str
             The name of the variable.
-        default : Optional[str]
+        default : str | None
             The default (unparsed) value.
 
         Returns
         -------
-        Optional[db.DBConfig]
+        db.DBConfig | None
             A database config object for Django.
 
         Raises
@@ -550,8 +548,8 @@ class Env(PathLike):
         except Exception as e:
             raise EnvError(f"Invalid database URL: '{value}'") from e
 
-    def email(self, key: str, default:
-              Optional[str] = None) -> Optional[email.EmailConfig]:
+    def email(self, key: str, default: str | None
+              = None) -> email.EmailConfig | None:
         """
         Return a dictionary that can be used for Django's e-mail settings.
 
@@ -559,12 +557,12 @@ class Env(PathLike):
         ----------
         key : str
             The name of the variable.
-        default : Optional[str]
+        default : str | None
             The default (unparsed) value.
 
         Returns
         -------
-        Optional[email.EmailConfig]
+        email.EmailConfig | None
             An e-mail config object for Django.
 
         Raises
@@ -606,7 +604,7 @@ class Env(PathLike):
             self[key] = value
         return value
 
-    def _replace(self, key: str, value: Optional[str]) -> None:
+    def _replace(self, key: str, value: str | None) -> None:
         target = mkstemp(prefix='yaenv')[-1]
         pattern = regex(fr'^\s*{key}\s*=')
         replaced = value is None  # can't replace if there's no value
