@@ -3,20 +3,20 @@ yaenv
 
 |pypi| |rtd| |github| |codecov|
 
-.. |pypi| image:: https://img.shields.io/pypi/v/yaenv.svg?logo=python
-   :target: https://pypi.org/project/yaenv/
+.. |pypi| image:: https://img.shields.io/pypi/v/yaenv/1.5.0.svg?logo=python
+   :target: https://pypi.org/project/yaenv/1.5.0/
    :alt: PyPI
 
-.. |rtd| image:: https://img.shields.io/readthedocs/yaenv.svg?logo=read-the-docs
-   :target: https://yaenv.readthedocs.io/en/latest/
+.. |rtd| image:: https://img.shields.io/readthedocs/yaenv/v1.5.0.svg?logo=read-the-docs
+   :target: https://yaenv.readthedocs.io/en/v1.5.0/
    :alt: Read the Docs
 
-.. |github| image:: https://img.shields.io/github/workflow/status/ObserverOfTime/yaenv/tests?label=build&logo=github
-   :target: https://github.com/ObserverOfTime/yaenv/actions/workflows/tests.yml
+.. |github| image:: https://img.shields.io/github/workflow/status/ObserverOfTime/yaenv/tests/py3.9?logo=github
+   :target: https://github.com/ObserverOfTime/yaenv/actions/workflows/tests.yml?query=branch%3Apy3.9
    :alt: GitHub Actions
 
-.. |codecov| image:: https://img.shields.io/codecov/c/gh/ObserverOfTime/yaenv?logo=codecov
-   :target: https://codecov.io/gh/ObserverOfTime/yaenv
+.. |codecov| image:: https://img.shields.io/codecov/c/gh/ObserverOfTime/yaenv/py3.9.svg?logo=codecov
+   :target: https://codecov.io/gh/ObserverOfTime/yaenv/branch/3.9
    :alt: Codecov
 
 Because none of the dozen dotenv parsers for Python fit all my use cases.
