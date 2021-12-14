@@ -1,0 +1,23 @@
+on:
+  push:
+    tags: ['*']
+name: deploy
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+    - name: Install Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.7
+    - name: Install Poetry
+      uses: abatilo/actions-poetry@v2.1.0
+      with:
+        poetry-version: 1.1.4
+    - name: Deploy to PyPI
+      run: poetry publish --build
+      env:
+        POETRY_HTTP_BASIC_PYPI_USERNAME: __token__
+        POETRY_HTTP_BASIC_PYPI_PASSWORD: ${{secrets.PYPI_TOKEN}}
