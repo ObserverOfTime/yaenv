@@ -1,0 +1,40 @@
+on:
+  push:
+    branches: ['*']
+  pull_request:
+    branches: ['*']
+name: tests
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: [3.8]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Set up cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pypoetry/virtualenvs
+          key: ${{runner.os}}-poetry-${{hashFiles('poetry.lock')}}
+      - name: Set up Python ${{matrix.python}}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{matrix.python}}
+      - name: Install Poetry
+        uses: abatilo/actions-poetry@v2.1.0
+        with:
+          poetry-version: 1.1.4
+      - name: Install dependencies
+        run: poetry install
+      - name: Lint project
+        run: |
+          poetry run flake8 --max-line-length=80 \
+            --docstring-convention=numpy --show-source yaenv && \
+          poetry run mypy --pretty --strict \
+            --no-warn-return-any --allow-any-generics -p yaenv
+      - name: Run tests
+        run: poetry run pytest --cov-report=xml
+      - name: Upload coverage to codecov
+        uses: codecov/codecov-action@v1

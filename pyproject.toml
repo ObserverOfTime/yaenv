@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "yaenv"
-version = "1.4.1"
+version = "1.4.2"
 readme = "README.rst"
 license = "BSD-3-Clause"
 description = "Yet another dotenv parser for Python."
@@ -50,13 +50,14 @@ sphinx-rtd-theme = "^0.4.3"
 [tool.poetry.urls]
 "Bug tracker" = "https://github.com/ObserverOfTime/yaenv/issues"
 
-[tool.pytest]
-addopts = "--pspec --cov-report=term --cov=yaenv"
-testpaths = "tests"
+[tool.coverage]
+run = {source = ["yaenv"]}
+report = {fail_under = 90}
 
-[tool.flake8]
-max_line_length = 80
-docstring_convention = "numpy"
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+required_plugins = ["pytest-cov", "pytest-pspec"]
+addopts = ["--pspec", "--cov", "--cov-report=term"]
 
 [tool.isort]
 balanced_wrapping = true

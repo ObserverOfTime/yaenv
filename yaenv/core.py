@@ -209,7 +209,7 @@ class Env(PathLike):
         EnvError
             If the environment variable is missing.
         """
-        value = self.vars.get(key)
+        value = self.ENV.get(key, self.vars.get(key))
         if value is None:
             raise EnvError(f"Missing environment variable: '{key}'")
         return value
