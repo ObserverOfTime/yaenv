@@ -38,13 +38,13 @@ include = "yaenv"
 python = "^3.10"
 
 [tool.poetry.dev-dependencies]
-flake8 = "^4.0.1"
-flake8-docstrings = "^1.6.0"
 mypy = "^0.910"
+pydocstyle = "^6.1.1"
+pylint = "^2.12.2"
 pytest = "^6.2.5"
 pytest-cov = "^3.0.0"
 pytest-pspec = "^0.0.4"
-sphinx = "^4.1.1"
+sphinx = "~4.3.1"
 sphinx-rtd-theme = "^1.0.0"
 
 [tool.poetry.urls]
@@ -58,6 +58,28 @@ report = {fail_under = 90}
 testpaths = ["tests"]
 required_plugins = ["pytest-cov", "pytest-pspec"]
 addopts = ["--pspec", "--cov", "--cov-report=term"]
+
+[tool.pylint.message_control]
+max-line-length = 80
+disable = [
+    "invalid-name",
+    "too-many-branches",
+    "wrong-import-order",
+    "raise-missing-from",
+    "unspecified-encoding",
+    "undefined-loop-variable",
+    "unsupported-assignment-operation"
+]
+
+[tool.pydocstyle]
+convention = "numpy"
+add-select = "D213,D415,D417"
+
+[tool.mypy]
+pretty = true
+strict = true
+warn_return_any = false
+allow_any_generics = true
 
 [tool.isort]
 balanced_wrapping = true

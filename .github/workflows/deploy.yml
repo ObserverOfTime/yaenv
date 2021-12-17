@@ -15,7 +15,7 @@ jobs:
     - name: Install Poetry
       uses: abatilo/actions-poetry@v2.1.0
       with:
-        poetry-version: 1.1.11
+        poetry-version: 1.1.12
     - name: Deploy to PyPI
       run: poetry publish --build
       env:
