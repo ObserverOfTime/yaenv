@@ -9,7 +9,7 @@ from secrets import token_urlsafe
 from shlex import shlex
 from shutil import move
 from tempfile import mkstemp
-from typing import Iterator, Optional, Union
+from typing import overload, Iterator, Literal, Optional, Union
 
 from . import db, email, utils
 
@@ -137,13 +137,13 @@ class EnvVar:
         yield self.key
         yield self.value
 
-    def __len__(self) -> int:
+    def __len__(self) -> Literal[0, 1, 2]:
         """
         Return a number which represents the state of the ``EnvVar``.
 
         Returns
         -------
-        int
+        Literal[0, 1, 2]
             ``0`` if the ``EnvVar`` is ``None``, ``1``
             if the value is blank, or ``2`` otherwise.
         """
@@ -343,7 +343,7 @@ class Env(PathLike):
     def vars(self) -> dict[str, str]:
         """`dict[str, str]` : Get the environment variables as a ``dict``."""
         def _sub_callback(match):  # type: ignore
-            return (self.ENV | result).get(match.group(1), '')  # type: ignore
+            return (self.ENV | result).get(match.group(1), '')
 
         with open(self.envfile, 'r') as f:
             envvars = list(filter(EnvVar.__len__, map(EnvVar, f.readlines())))
@@ -358,7 +358,13 @@ class Env(PathLike):
 
     def setenv(self) -> None:
         """Add the variables defined in the dotenv file to :os:`environ`."""
-        self.ENV |= self.vars  # type: ignore
+        self.ENV |= self.vars
+
+    @overload
+    def get(self, key: str, default: str) -> str: ...
+
+    @overload
+    def get(self, key: str, default: None = None) -> Optional[str]: ...
 
     def get(self, key: str, default: Optional[str] = None) -> Optional[str]:
         """
@@ -382,6 +388,12 @@ class Env(PathLike):
         'value'
         """
         return self.ENV.get(key, self.vars.get(key) or default)
+
+    @overload
+    def bool(self, key: str, default: bool) -> bool: ...
+
+    @overload
+    def bool(self, key: str, default: None = None) -> Optional[bool]: ...
 
     def bool(self, key: str, default: Optional[bool] = None) -> Optional[bool]:
         """
@@ -418,6 +430,12 @@ class Env(PathLike):
             return False
         raise EnvError(f"Invalid boolean value: '{value}'")
 
+    @overload
+    def int(self, key: str, default: int) -> int: ...
+
+    @overload
+    def int(self, key: str, default: None = None) -> Optional[int]: ...
+
     def int(self, key: str, default: Optional[int] = None) -> Optional[int]:
         """
         Return an environment variable as an ``int``, or a default value.
@@ -451,6 +469,12 @@ class Env(PathLike):
             return int(value)
         except ValueError:
             raise EnvError(f"Invalid integer value: '{value}'")
+
+    @overload
+    def float(self, key: str, default: float) -> float: ...
+
+    @overload
+    def float(self, key: str, default: None = None) -> Optional[float]: ...
 
     def float(self, key: str, default:
               Optional[float] = None) -> Optional[float]:
@@ -487,6 +511,13 @@ class Env(PathLike):
         except ValueError:
             raise EnvError(f"Invalid numerical value: '{value}'")
 
+    @overload
+    def list(self, key: str, default: list, separator: str = ...) -> list: ...
+
+    @overload
+    def list(self, key: str, default: None = None,
+              separator: str = ...) -> Optional[list]: ...
+
     def list(self, key: str, default: Optional[list] = None,
              separator: str = ',') -> Optional[list]:
         """
@@ -515,6 +546,12 @@ class Env(PathLike):
         if value is None:
             return default
         return value.split(separator)
+
+    @overload
+    def db(self, key: str, default: str) -> db.DBConfig: ...
+
+    @overload
+    def db(self, key: str, default: None = None) -> Optional[db.DBConfig]: ...
 
     def db(self, key: str, default:
            Optional[str] = None) -> Optional[db.DBConfig]:
@@ -549,6 +586,13 @@ class Env(PathLike):
             return db.parse(value)
         except Exception as e:
             raise EnvError(f"Invalid database URL: '{value}'") from e
+
+    @overload
+    def email(self, key: str, default: str) -> email.EmailConfig: ...
+
+    @overload
+    def email(self, key: str, default: None = None
+              ) -> Optional[email.EmailConfig]: ...
 
     def email(self, key: str, default:
               Optional[str] = None) -> Optional[email.EmailConfig]:

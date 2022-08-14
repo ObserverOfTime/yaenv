@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "yaenv"
-version = "1.5.1"
+version = "1.5.2"
 readme = "README.rst"
 license = "BSD-3-Clause"
 description = "Yet another dotenv parser for Python."
@@ -21,14 +21,12 @@ keywords = [
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: BSD License",
     "Natural Language :: English",
     "Operating System :: OS Independent",
     "Programming Language :: Python",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3 :: Only",
     "Topic :: Software Development :: Libraries :: Python Modules",
+    "Typing :: Typed",
 ]
 
 [[tool.poetry.packages]]
@@ -38,14 +36,17 @@ include = "yaenv"
 python = "^3.9"
 
 [tool.poetry.dev-dependencies]
-flake8 = "^3.8.4"
-flake8-docstrings = "^1.5.0"
-mypy = "^0.800"
-pytest = "^6.1.2"
-pytest-cov = "^2.10.1"
+mypy = "^0.971"
+pylint = "^2.14.5"
+pytest = "^7.1.2"
+pytest-cov = "^3.0.0"
 pytest-pspec = "^0.0.4"
-sphinx = "^3.5.1"
-sphinx-rtd-theme = "^0.5.0"
+sphinx = "~5.1.1"
+sphinx-rtd-theme = "^1.0.0"
+
+[tool.poetry.dev-dependencies."pydocstyle"]
+version = "^6.1.1"
+extras = ["toml"]
 
 [tool.poetry.urls]
 "Bug tracker" = "https://github.com/ObserverOfTime/yaenv/issues"
@@ -58,6 +59,28 @@ report = {fail_under = 90}
 testpaths = ["tests"]
 required_plugins = ["pytest-cov", "pytest-pspec"]
 addopts = ["--pspec", "--cov", "--cov-report=term"]
+
+[tool.pylint.message_control]
+max-line-length = 80
+disable = [
+    "invalid-name",
+    "too-many-branches",
+    "wrong-import-order",
+    "raise-missing-from",
+    "unspecified-encoding",
+    "undefined-loop-variable",
+    "unsupported-assignment-operation"
+]
+
+[tool.pydocstyle]
+convention = "numpy"
+add-select = "D213,D415,D417"
+
+[tool.mypy]
+pretty = true
+strict = true
+warn_return_any = false
+allow_any_generics = true
 
 [tool.isort]
 balanced_wrapping = true

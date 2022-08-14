@@ -1,8 +1,8 @@
 version: 2
 build:
-    image: testing
+    image: latest
 python:
-    version: 3.9
+    version: '3.9'
     install:
         - requirements: docs/requirements.txt
     system_packages: false

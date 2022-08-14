@@ -4,6 +4,6 @@ from importlib.metadata import version
 
 from .core import Env, EnvError
 
-__version__ = version(__name__)
+__version__: str = version(__name__)
 
 __all__ = ['Env', 'EnvError']
