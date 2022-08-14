@@ -358,7 +358,7 @@ class Env(PathLike):
 
     def setenv(self) -> None:
         """Add the variables defined in the dotenv file to :os:`environ`."""
-        self.ENV |= self.vars  # type: ignore
+        self.ENV |= self.vars
 
     def get(self, key: str, default: str | None = None) -> str | None:
         """
@@ -611,7 +611,7 @@ class Env(PathLike):
 
         if value is not None:
             value = value.replace('"', '\\"') \
-                .replace('\n', '\\n').replace('\t', '\\t')
+                    .replace('\n', '\\n').replace('\t', '\\t')
             newline = f'{key}="{value}"\n'
 
         with open(target, 'w') as tf, open(self.envfile, 'r') as sf:
