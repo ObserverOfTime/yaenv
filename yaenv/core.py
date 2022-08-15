@@ -9,12 +9,18 @@ from secrets import token_urlsafe
 from shlex import shlex
 from shutil import move
 from tempfile import mkstemp
-from typing import Dict, Iterator, List, Optional, Tuple, Union
+from typing import overload, Dict, Iterator, List, Optional, Tuple, Union
 
 from . import db, email, utils
 
-EnvError = type('EnvError', (Exception,), {})
-EnvError.__doc__ = 'Exception class representing a dotenv error.'
+# NOTE: ignore warning about NotImplemented use
+__import__('warnings').filterwarnings(
+    'ignore', 'NotImplemented', DeprecationWarning, 'yaenv'
+)
+
+
+class EnvError(Exception):
+    """Exception class representing a dotenv error."""
 
 
 class EnvVar:
@@ -33,7 +39,7 @@ class EnvVar:
     key: str
     value: str
 
-    def __new__(cls, line: str) -> Optional[EnvVar]:  # type: ignore
+    def __new__(cls, line: str) -> Optional[EnvVar]:  # type: ignore[misc]
         """
         Parse a line and return a new instance or ``None``.
 
@@ -325,12 +331,12 @@ class Env(PathLike):
     @cached_property
     def vars(self) -> Dict[str, str]:
         """`Dict[str, str]` : Get the environment variables as a ``dict``."""
-        def _sub_callback(match):  # type: ignore
+        def _sub_callback(match):  # type: ignore[no-untyped-def]
             return {**self.ENV, **result}.get(match.group(1), '')
 
         with open(self.envfile, 'r') as f:
             envvars = list(filter(None.__ne__, map(EnvVar, f.readlines())))
-            result = dict(envvars)  # type: ignore
+            result = dict(envvars)  # type: ignore[arg-type]
 
         # substitute variables that can be interpolated
         posix = regex(r'\$\{([^}].*)?\}')
@@ -342,6 +348,12 @@ class Env(PathLike):
     def setenv(self) -> None:
         """Add the variables defined in the dotenv file to :os:`environ`."""
         self.ENV.update(self.vars)
+
+    @overload
+    def get(self, key: str, default: str) -> str: ...
+
+    @overload
+    def get(self, key: str, default: None = None) -> Optional[str]: ...
 
     def get(self, key: str, default: Optional[str] = None) -> Optional[str]:
         """
@@ -365,6 +377,12 @@ class Env(PathLike):
         'value'
         """
         return self.ENV.get(key, self.vars.get(key) or default)
+
+    @overload
+    def bool(self, key: str, default: bool) -> bool: ...
+
+    @overload
+    def bool(self, key: str, default: None = None) -> Optional[bool]: ...
 
     def bool(self, key: str, default: Optional[bool] = None) -> Optional[bool]:
         """
@@ -401,6 +419,12 @@ class Env(PathLike):
             return False
         raise EnvError(f"Invalid boolean value: '{value}'")
 
+    @overload
+    def int(self, key: str, default: int) -> int: ...
+
+    @overload
+    def int(self, key: str, default: None = None) -> Optional[int]: ...
+
     def int(self, key: str, default: Optional[int] = None) -> Optional[int]:
         """
         Return an environment variable as an ``int``, or a default value.
@@ -434,6 +458,12 @@ class Env(PathLike):
             return int(value)
         except ValueError:
             raise EnvError(f"Invalid integer value: '{value}'")
+
+    @overload
+    def float(self, key: str, default: float) -> float: ...
+
+    @overload
+    def float(self, key: str, default: None = None) -> Optional[float]: ...
 
     def float(self, key: str, default:
               Optional[float] = None) -> Optional[float]:
@@ -470,6 +500,13 @@ class Env(PathLike):
         except ValueError:
             raise EnvError(f"Invalid numerical value: '{value}'")
 
+    @overload
+    def list(self, key: str, default: List, separator: str = ...) -> List: ...
+
+    @overload
+    def list(self, key: str, default: None = None,
+              separator: str = ...) -> Optional[List]: ...
+
     def list(self, key: str, default: Optional[List] = None,
              separator: str = ',') -> Optional[List]:
         """
@@ -498,6 +535,12 @@ class Env(PathLike):
         if value is None:
             return default
         return value.split(separator)
+
+    @overload
+    def db(self, key: str, default: str) -> db.DBConfig: ...
+
+    @overload
+    def db(self, key: str, default: None = None) -> Optional[db.DBConfig]: ...
 
     def db(self, key: str, default:
            Optional[str] = None) -> Optional[db.DBConfig]:
@@ -532,6 +575,13 @@ class Env(PathLike):
             return db.parse(value)
         except Exception as e:
             raise EnvError(f"Invalid database URL: '{value}'") from e
+
+    @overload
+    def email(self, key: str, default: str) -> email.EmailConfig: ...
+
+    @overload
+    def email(self, key: str, default: None = None
+              ) -> Optional[email.EmailConfig]: ...
 
     def email(self, key: str, default:
               Optional[str] = None) -> Optional[email.EmailConfig]:

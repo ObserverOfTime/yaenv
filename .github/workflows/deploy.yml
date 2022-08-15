@@ -11,11 +11,11 @@ jobs:
     - name: Install Python
       uses: actions/setup-python@v2
       with:
-        python-version: 3.8
+        python-version: '3.8'
     - name: Install Poetry
       uses: abatilo/actions-poetry@v2.1.0
       with:
-        poetry-version: 1.1.4
+        poetry-version: 1.1.12
     - name: Deploy to PyPI
       run: poetry publish --build
       env:
