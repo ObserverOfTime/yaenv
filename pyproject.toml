@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "yaenv"
-version = "1.6.3"
+version = "1.6.3.post1"
 readme = "README.rst"
 license = "BSD-3-Clause"
 description = "Yet another dotenv parser for Python."
@@ -50,6 +50,7 @@ extras = ["toml"]
 
 [tool.poetry.urls]
 "Bug tracker" = "https://github.com/ObserverOfTime/yaenv/issues"
+"Donations" = "https://github.com/sponsors/ObserverOfTime"
 
 [tool.coverage]
 run = {source = ["yaenv"]}
