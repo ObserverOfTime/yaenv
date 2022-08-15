@@ -3,12 +3,12 @@ yaenv
 
 |pypi| |rtd| |github| |codecov|
 
-.. |pypi| image:: https://img.shields.io/pypi/v/yaenv/1.3.2.post1.svg?logo=python
-   :target: https://pypi.org/project/yaenv/1.3.2.post1/
+.. |pypi| image:: https://img.shields.io/pypi/v/yaenv/1.3.3.svg?logo=python
+   :target: https://pypi.org/project/yaenv/1.3.3/
    :alt: PyPI
 
-.. |rtd| image:: https://img.shields.io/readthedocs/yaenv/v1.3.2.post1.svg?logo=read-the-docs
-   :target: https://yaenv.readthedocs.io/en/v1.3.2.post1/
+.. |rtd| image:: https://img.shields.io/readthedocs/yaenv/v1.3.3.svg?logo=read-the-docs
+   :target: https://yaenv.readthedocs.io/en/v1.3.3/
    :alt: Read the Docs
 
 .. |github| image:: https://img.shields.io/github/workflow/status/ObserverOfTime/yaenv/tests/py3.7?logo=github

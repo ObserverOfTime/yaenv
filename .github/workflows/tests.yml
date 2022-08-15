@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python: [3.7]
+        python: ['3.7']
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -25,15 +25,14 @@ jobs:
       - name: Install Poetry
         uses: abatilo/actions-poetry@v2.1.0
         with:
-          poetry-version: 1.1.4
+          poetry-version: 1.1.12
       - name: Install dependencies
         run: poetry install
       - name: Lint project
-        run: |
-          poetry run flake8 --max-line-length=80 \
-            --docstring-convention=numpy --show-source yaenv && \
-          poetry run mypy --pretty --strict \
-            --no-warn-return-any --allow-any-generics -p yaenv
+        run: >-
+          poetry run pylint yaenv &&
+          poetry run mypy -p yaenv &&
+          poetry run pydocstyle yaenv
       - name: Run tests
         run: poetry run pytest --cov-report=xml
       - name: Upload coverage to codecov

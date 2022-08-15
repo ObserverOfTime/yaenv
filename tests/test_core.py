@@ -51,6 +51,16 @@ class TestEnv:
         env.setenv()
         assert 'EMAIL' in environ
 
+    def test_no_final_eol(self, env: yaenv.Env):
+        """it can parse a dotenv file without a final EOL"""
+        from tempfile import mkstemp
+        env.envfile = mkstemp()[-1]
+        with open(env, 'w') as f:
+            f.write('EOL=no')
+        env['BLANK'] = ''
+        with open(env, 'r') as f:
+            assert len(f.readlines()) == 2
+
     def test_fspath(self, env: yaenv.Env):
         """it returns the file system path of the dotenv file"""
         from os import fspath
