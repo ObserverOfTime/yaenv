@@ -605,8 +605,8 @@ docs = ["jaraco.tidelift (>=1.4)", "rst.linker (>=1.9)", "jaraco.packaging (>=9)
 
 [metadata]
 lock-version = "1.1"
-python-versions = "~3.8"
-content-hash = "29049c63562207fe7df39858a0d04df2cce4dc50cbcc8fed91190c73626341e5"
+python-versions = "^3.8"
+content-hash = "d5474f9219736954f452c538734c85969230517456690ac3a72069c1f397efc5"
 
 [metadata.files]
 alabaster = [

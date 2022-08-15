@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "yaenv"
-version = "1.4.3"
+version = "1.4.3.post1"
 readme = "README.rst"
 license = "BSD-3-Clause"
 description = "Yet another dotenv parser for Python."
@@ -34,7 +34,7 @@ classifiers = [
 include = "yaenv"
 
 [tool.poetry.dependencies]
-python = "~3.8"
+python = "^3.8"
 
 [tool.poetry.dev-dependencies]
 mypy = "^0.971"

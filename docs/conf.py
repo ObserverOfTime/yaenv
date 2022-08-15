@@ -12,7 +12,9 @@ https://www.sphinx-doc.org/en/latest/usage/configuration.html
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 
+import linecache
 import os
+import re
 import sys
 import sphinx_rtd_theme
 
@@ -26,7 +28,7 @@ copyright = '2019-2022, ObserverOfTime, BSD 3-Clause License'
 author = 'ObserverOfTime'
 
 # The full version, including alpha/beta/rc tags
-release = '1.4.3'
+release = re.search('"(.+)"', linecache.getline('pyproject.toml', 3)).group(1)
 
 # -- General configuration ---------------------------------------------------
 
