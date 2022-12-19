@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "yaenv"
-version = "1.3.3"
+version = "1.3.3.post1"
 readme = "README.rst"
 license = "BSD-3-Clause"
 description = "Yet another dotenv parser for Python."
@@ -41,13 +41,13 @@ version = "^1.5.1"
 python = "<3.8"
 
 [tool.poetry.dev-dependencies]
-mypy = "^0.971"
-pylint = "^2.14.5"
-pytest = "^7.1.2"
-pytest-cov = "^3.0.0"
+mypy = "^0.991"
+pylint = "^2.15.9"
+pytest = "^7.2.0"
+pytest-cov = "^4.0.0"
 pytest-pspec = "^0.0.4"
 sphinx = "~5.1.1"
-sphinx-rtd-theme = "^1.0.0"
+sphinx-rtd-theme = "^1.1.1"
 
 [tool.poetry.dev-dependencies."pydocstyle"]
 version = "^6.1.1"
@@ -55,6 +55,7 @@ extras = ["toml"]
 
 [tool.poetry.urls]
 "Bug tracker" = "https://github.com/ObserverOfTime/yaenv/issues"
+"Donations" = "https://github.com/sponsors/ObserverOfTime"
 
 [tool.coverage]
 run = {source = ["yaenv"]}
