@@ -11,7 +11,7 @@ yaenv
    :target: https://yaenv.readthedocs.io/en/latest/
    :alt: Read the Docs
 
-.. |github| image:: https://img.shields.io/github/workflow/status/ObserverOfTime/yaenv/tests?label=build&logo=github
+.. |github| image:: https://img.shields.io/github/actions/workflow/status/ObserverOfTime/yaenv/tests.yml?label=build&logo=github&branch=master
    :target: https://github.com/ObserverOfTime/yaenv/actions/workflows/tests.yml?query=branch%3Amaster
    :alt: GitHub Actions
 
