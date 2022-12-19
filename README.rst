@@ -3,15 +3,15 @@ yaenv
 
 |pypi| |rtd| |github| |codecov|
 
-.. |pypi| image:: https://img.shields.io/pypi/v/yaenv/1.4.3.svg?logo=python
-   :target: https://pypi.org/project/yaenv/1.4.3/
+.. |pypi| image:: https://img.shields.io/pypi/v/yaenv/1.4.3.post2.svg?logo=python
+   :target: https://pypi.org/project/yaenv/1.4.3.post2/
    :alt: PyPI
 
-.. |rtd| image:: https://img.shields.io/readthedocs/yaenv/v1.4.3.svg?logo=read-the-docs
-   :target: https://yaenv.readthedocs.io/en/v1.4.3/
+.. |rtd| image:: https://img.shields.io/readthedocs/yaenv/v1.4.3.post2.svg?logo=read-the-docs
+   :target: https://yaenv.readthedocs.io/en/v1.4.3.post2/
    :alt: Read the Docs
 
-.. |github| image:: https://img.shields.io/github/workflow/status/ObserverOfTime/yaenv/tests/py3.8?logo=github
+.. |github| image:: https://img.shields.io/github/actions/workflow/status/ObserverOfTime/yaenv/tests.yml?label=build&logo=github&branch=py3.8
    :target: https://github.com/ObserverOfTime/yaenv/actions/workflows/tests.yml?query=branch%3Apy3.8
    :alt: GitHub Actions
 
