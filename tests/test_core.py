@@ -212,14 +212,14 @@ class TestEnvVar:
         assert e.value == 'value'
         assert not e._interpolate
 
-    def test_blank(self):
+    def test_blank_value(self):
         """it can parse blank variables"""
         assert yaenv.core.EnvVar('key=').value == ''
         assert yaenv.core.EnvVar('key=""').value == ''
         assert yaenv.core.EnvVar("key=''").value == ''
         assert yaenv.core.EnvVar('key= ').value == ''
 
-    def test_blank(self):
+    def test_blank_line(self):
         """it ignores blank lines"""
         assert yaenv.core.EnvVar('\n') is None
         assert yaenv.core.EnvVar(' \t ') is None

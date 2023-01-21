@@ -1,4 +1,4 @@
-"""Useful utilities."""
+"""Miscellaneous utilities."""
 
 from typing import Any
 
