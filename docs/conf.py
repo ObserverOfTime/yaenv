@@ -71,10 +71,10 @@ source_suffix = '.rst'
 
 master_doc = 'index'
 
-needs_sphinx = '5.1'
+needs_sphinx = '6.2'
 
 extlinks = {
-    'dj': ('https://docs.djangoproject.com/en/4.1/ref/settings/#%s', '%s'),
+    'dj': ('https://docs.djangoproject.com/en/4.2/ref/settings/#%s', '%s'),
     'os': ('https://docs.python.org/3.10/library/os.html#os.%s', 'os.%s')
 }
 
