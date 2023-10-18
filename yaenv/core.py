@@ -4,12 +4,12 @@ from __future__ import annotations
 
 from functools import cached_property
 from os import PathLike, environ, fspath, path
-from re import compile as regex
+from re import Match, compile as regex
 from secrets import token_urlsafe
 from shlex import shlex
 from shutil import move
 from tempfile import mkstemp
-from typing import overload, Dict, Iterator, List, Optional, Tuple, Union
+from typing import Dict, Iterator, List, Optional, Tuple, Union, overload
 
 from . import db, email, utils
 
@@ -51,8 +51,8 @@ class EnvVar:
         Returns
         -------
         Optional[EnvVar]
-            Returns a new ``EnvVar`` if all went well, or ``None``
-            if the line doesn't contain a variable declaration.
+            A new ``EnvVar`` if all went well, or ``None`` if
+            the line doesn't contain a variable declaration.
 
         Raises
         ------
@@ -331,7 +331,7 @@ class Env(PathLike):
     @cached_property
     def vars(self) -> Dict[str, str]:
         """`Dict[str, str]` : Get the environment variables as a ``dict``."""
-        def _sub_callback(match):  # type: ignore[no-untyped-def]
+        def _sub_callback(match: Match) -> str:
             return {**self.ENV, **result}.get(match.group(1), '')
 
         with open(self.envfile, 'r') as f:

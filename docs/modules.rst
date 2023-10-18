@@ -4,7 +4,7 @@ API reference
 .. default-domain:: py
 
 core module
--------------
+-----------
 
 .. automodule:: yaenv.core
    :members:

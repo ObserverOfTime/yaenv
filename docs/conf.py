@@ -16,7 +16,6 @@ import linecache
 import os
 import re
 import sys
-import sphinx_rtd_theme
 
 sys.path.insert(0, os.path.abspath('..'))
 sys.path.append(os.path.dirname(__file__))
@@ -24,7 +23,7 @@ sys.path.append(os.path.dirname(__file__))
 # -- Project information -----------------------------------------------------
 
 project = 'yaenv'
-copyright = '2019-2022, ObserverOfTime, BSD 3-Clause License'
+copyright = '2019-2023, ObserverOfTime, BSD 3-Clause License'
 author = 'ObserverOfTime'
 
 # The full version, including alpha/beta/rc tags
@@ -39,6 +38,7 @@ extensions = [
     'sphinx.ext.extlinks',
     'sphinx.ext.napoleon',
     'sphinx.ext.viewcode',
+    'sphinxcontrib.jquery',
 ]
 
 # Napoleon settings
@@ -48,10 +48,11 @@ napoleon_include_init_with_doc = True
 napoleon_include_private_with_doc = False
 napoleon_include_special_with_doc = True
 napoleon_use_admonition_for_examples = False
-napoleon_use_admonition_for_notes = False
-napoleon_use_admonition_for_references = False
+napoleon_use_admonition_for_notes = True
+napoleon_use_admonition_for_references = True
+napoleon_attr_annotations = True
 napoleon_use_ivar = True
-napoleon_use_param = True
+napoleon_use_param = False
 napoleon_use_rtype = False
 
 # Autodoc settings
@@ -71,10 +72,10 @@ source_suffix = '.rst'
 
 master_doc = 'index'
 
-needs_sphinx = '5.1'
+needs_sphinx = '6.2'
 
 extlinks = {
-    'dj': ('https://docs.djangoproject.com/en/4.1/ref/settings/#%s', '%s'),
+    'dj': ('https://docs.djangoproject.com/en/4.2/ref/settings/#%s', '%s'),
     'os': ('https://docs.python.org/3.8/library/os.html#os.%s', 'os.%s')
 }
 
@@ -83,7 +84,9 @@ extlinks = {
 # The theme to use for HTML and HTML Help pages.
 # See the documentation for a list of builtin themes.
 html_theme = 'sphinx_rtd_theme'
-html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
+html_theme_path = [
+    __import__(html_theme).get_html_theme_path()
+]
 html_theme_options = {
     'display_version': True,
     'collapse_navigation': True,
