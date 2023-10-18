@@ -76,7 +76,7 @@ needs_sphinx = '6.2'
 
 extlinks = {
     'dj': ('https://docs.djangoproject.com/en/4.2/ref/settings/#%s', '%s'),
-    'os': ('https://docs.python.org/3.10/library/os.html#os.%s', 'os.%s')
+    'os': ('https://docs.python.org/3.9/library/os.html#os.%s', 'os.%s')
 }
 
 # -- Options for HTML output -------------------------------------------------

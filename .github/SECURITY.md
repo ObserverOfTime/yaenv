@@ -6,7 +6,7 @@
 | :-----: | :----: | :----------------------: |
 |   1.5   |  3.9+  |    :heavy_check_mark:    |
 |   1.4   |  3.8+  |    :heavy_check_mark:    |
-|   1.3   |  3.7+  |    :heavy_check_mark:    |
+|   1.3   |  3.7+  | :heavy_multiplication_x: |
 |   1.2   |  3.6+  | :heavy_multiplication_x: |
 |   1.1   |  3.5+  | :heavy_multiplication_x: |
 |   1.0   |  3.5+  | :heavy_multiplication_x: |
