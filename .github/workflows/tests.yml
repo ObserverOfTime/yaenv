@@ -23,16 +23,15 @@ jobs:
         with:
           python-version: ${{matrix.python}}
       - name: Install Poetry
-        uses: abatilo/actions-poetry@v2.2.0
+        uses: abatilo/actions-poetry@v2.3.0
         with:
-          poetry-version: 1.3.1
+          poetry-version: 1.6.1
       - name: Install dependencies
         run: poetry install
       - name: Lint project
         run: >-
-          poetry run pylint yaenv &&
-          poetry run mypy -p yaenv &&
-          poetry run pydocstyle yaenv
+          poetry run ruff yaenv &&
+          poetry run mypy -p yaenv
       - name: Run tests
         run: poetry run pytest --cov-report=xml
       - name: Upload coverage to codecov

@@ -23,7 +23,7 @@ sys.path.append(os.path.dirname(__file__))
 # -- Project information -----------------------------------------------------
 
 project = 'yaenv'
-copyright = '2019-2022, ObserverOfTime, BSD 3-Clause License'
+copyright = '2019-2023, ObserverOfTime, BSD 3-Clause License'
 author = 'ObserverOfTime'
 
 # The full version, including alpha/beta/rc tags
@@ -38,6 +38,7 @@ extensions = [
     'sphinx.ext.extlinks',
     'sphinx.ext.napoleon',
     'sphinx.ext.viewcode',
+    'sphinxcontrib.jquery',
 ]
 
 # Napoleon settings
@@ -71,10 +72,10 @@ source_suffix = '.rst'
 
 master_doc = 'index'
 
-needs_sphinx = '5.1'
+needs_sphinx = '6.2'
 
 extlinks = {
-    'dj': ('https://docs.djangoproject.com/en/4.1/ref/settings/#%s', '%s'),
+    'dj': ('https://docs.djangoproject.com/en/4.2/ref/settings/#%s', '%s'),
     'os': ('https://docs.python.org/3.10/library/os.html#os.%s', 'os.%s')
 }
 
