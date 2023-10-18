@@ -23,7 +23,7 @@ sys.path.append(os.path.dirname(__file__))
 # -- Project information -----------------------------------------------------
 
 project = 'yaenv'
-copyright = '2019-2022, ObserverOfTime, BSD 3-Clause License'
+copyright = '2019-2023, ObserverOfTime, BSD 3-Clause License'
 author = 'ObserverOfTime'
 
 # The full version, including alpha/beta/rc tags
@@ -38,6 +38,7 @@ extensions = [
     'sphinx.ext.extlinks',
     'sphinx.ext.napoleon',
     'sphinx.ext.viewcode',
+    'sphinxcontrib.jquery',
 ]
 
 # Napoleon settings

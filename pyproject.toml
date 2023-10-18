@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "yaenv"
-version = "1.6.4.dev1"
+version = "1.6.4.dev2"
 readme = "README.rst"
 license = "BSD-3-Clause"
 description = "Yet another dotenv parser for Python."
@@ -36,13 +36,13 @@ include = "yaenv"
 python = "^3.10"
 
 [tool.poetry.group.dev.dependencies]
-mypy = "^1.5.1"
+mypy = "^1.6.1"
 pytest = "^7.4.2"
 pytest-cov = "^4.1.0"
 pytest-pspec = "^0.0.4"
 sphinx = "~6.2.1"
 sphinx-rtd-theme = "^1.3.0"
-ruff = "^0.0.284"
+ruff = "^0.1.0"
 
 [tool.poetry.urls]
 "Bug tracker" = "https://github.com/ObserverOfTime/yaenv/issues"
@@ -61,7 +61,7 @@ addopts = ["--pspec", "--cov", "--cov-report=term"]
 
 [tool.ruff]
 line-length = 80
-format = "grouped"
+output-format = "grouped"
 select = ["F", "E", "W", "D", "I", "Q"]
 ignore = [
     "D107",
