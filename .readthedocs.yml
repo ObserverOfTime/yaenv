@@ -4,11 +4,10 @@ build:
     tools:
       python: '3.10'
     jobs:
-      post_create_environment:
-        - pip install poetry
-        - poetry config virtualenvs.create false
       post_install:
-        - poetry install --with docs
+        - pip install --no-cache-dir poetry
+        - pip uninstall -y sphinx
+        - VIRTUAL_ENV=$READTHEDOCS_VIRTUALENV_PATH poetry install --with docs
 sphinx:
     builder: html
     configuration: docs/conf.py

@@ -23,7 +23,7 @@ sys.path.append(os.path.dirname(__file__))
 # -- Project information -----------------------------------------------------
 
 project = 'yaenv'
-copyright = '2019-2023, ObserverOfTime, BSD 3-Clause License'
+copyright = '2019-2024, ObserverOfTime, BSD 3-Clause License'
 author = 'ObserverOfTime'
 
 # The full version, including alpha/beta/rc tags
@@ -68,14 +68,16 @@ exclude_patterns = [
     '_build', 'Thumbs.db', '.DS_Store', 'desktop.ini', '.directory'
 ]
 
-source_suffix = '.rst'
+source_suffix = {
+    '.rst': 'restructuredtext'
+}
 
 master_doc = 'index'
 
-needs_sphinx = '6.2'
+needs_sphinx = '7.4'
 
 extlinks = {
-    'dj': ('https://docs.djangoproject.com/en/4.2/ref/settings/#%s', '%s'),
+    'dj': ('https://docs.djangoproject.com/en/5.1/ref/settings/#%s', '%s'),
     'os': ('https://docs.python.org/3.10/library/os.html#os.%s', 'os.%s')
 }
 
@@ -95,4 +97,11 @@ html_theme_options = {
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = []
+html_static_path: list[str] = []
+
+# Define the canonical URL if you are using a custom domain on Read the Docs
+html_baseurl = os.environ.get('READTHEDOCS_CANONICAL_URL', '')
+
+# Tell Jinja2 templates the build is running on Read the Docs
+if os.environ.get('READTHEDOCS', '') == 'True':
+    html_context = {'READTHEDOCS': True}
