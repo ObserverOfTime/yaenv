@@ -22,7 +22,7 @@ SCHEMES['postgresql'] = SCHEMES['pgsql']
 SCHEMES['sqlite3'] = SCHEMES['sqlite']
 
 # Register database schemes in URLs.
-urlparse.uses_netloc += list(SCHEMES)
+urlparse.uses_netloc.extend(SCHEMES.keys())
 
 
 def add_scheme(scheme: str, backend: str) -> None:

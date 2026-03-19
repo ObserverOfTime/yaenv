@@ -22,7 +22,7 @@ SCHEMES['smtp+ssl'] = SCHEMES['smtp']
 SCHEMES['smtp+tls'] = SCHEMES['smtp']
 
 # Register e-mail schemes in URLs.
-urlparse.uses_netloc += list(SCHEMES)
+urlparse.uses_netloc.extend(SCHEMES.keys())
 
 
 def parse(url: str) -> EmailConfig:
