@@ -36,22 +36,21 @@ include = "yaenv"
 python = "^3.10"
 
 [tool.poetry.group.dev.dependencies]
-mypy = "^1.11.2"
-pytest = "^8.3.3"
-pytest-cov = "^5.0.0"
+mypy = "^1.19.1"
+pytest = "^9.0.2"
+pytest-cov = "^7.0.0"
 pytest-pspec = "^0.0.4"
-ruff = "^0.6.8"
+ruff = "^0.15.6"
 
 [tool.poetry.group.docs]
 optional = true
 
 [tool.poetry.group.docs.dependencies]
 sphinx = "~7.4.7"
-sphinx-rtd-theme = "^2.0.0"
+sphinx-rtd-theme = "^3.1.0"
 
 [tool.poetry.urls]
 "Bug tracker" = "https://github.com/ObserverOfTime/yaenv/issues"
-"Donations" = "https://github.com/sponsors/ObserverOfTime"
 
 [tool.coverage.run]
 source = ["yaenv"]

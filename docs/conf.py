@@ -23,7 +23,7 @@ sys.path.append(os.path.dirname(__file__))
 # -- Project information -----------------------------------------------------
 
 project = 'yaenv'
-copyright = '2019-2024, ObserverOfTime, BSD 3-Clause License'
+copyright = '2019-2026, ObserverOfTime, BSD 3-Clause License'
 author = 'ObserverOfTime'
 
 # The full version, including alpha/beta/rc tags
